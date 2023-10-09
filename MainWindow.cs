@@ -6,5 +6,10 @@ namespace UxGame_Testing_Utility
         {
             InitializeComponent();
         }
+
+        private void MainWindow_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
