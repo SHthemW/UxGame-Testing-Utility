@@ -16,6 +16,12 @@ namespace UxGame_Testing_Utility.Entities
             DplProgPath = dplProgPath ?? throw new ArgumentNullException(nameof(dplProgPath));
         }
 
+        public override string ToString()
+        {
+            return 
+                $"{nameof(DataSrcPath)}: {DataSrcPath} \n" +
+                $"{nameof(DplProgPath)}: {DplProgPath} \n";
+        }
 
         public static bool CheckVaild(ConfigData conf, out ErrInfo[] errs)
         {
@@ -30,11 +36,11 @@ namespace UxGame_Testing_Utility.Entities
             errs = errList.ToArray();
             return errs.Length == 0;
 
-            static bool PathIsValid(string path, out PathValidState result) 
+            static bool PathIsValid(string path, out string result) 
             {
                 if (string.IsNullOrEmpty(path))
                 {
-                    result = PathValidState.PathStrIsEmpty;
+                    result = "PathStrIsEmpty";
                     return false;
                 }
 
@@ -46,36 +52,19 @@ namespace UxGame_Testing_Utility.Entities
                 }
                 catch (ArgumentException)
                 {
-                    result = PathValidState.PathStrBadFormat;
+                    result = "PathStrBadFormat";
                     return false;
                 }
 
                 if (string.IsNullOrEmpty(fileName))
                 {
-                    result = PathValidState.NotFound;
+                    result = "FileNotFound";
                     return false;
                 }
 
-                result = PathValidState.OK;
+                result = "OK";
                 return true;
             }
         }
-
-        public enum PathValidState
-        {
-            OK = 0, NotFound, PathStrIsEmpty, PathStrBadFormat
-        }
-    }
-
-    public readonly struct ErrInfo
-    {
-        public string Name { get; private init; }
-        public string Reason { get; private init; }
-
-        public ErrInfo(string name, string reason)
-        {
-            Name = name ?? throw new ArgumentNullException(nameof(name));
-            Reason = reason ?? throw new ArgumentNullException(nameof(reason));
-        }
-    }
+    }  
 }
