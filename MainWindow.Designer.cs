@@ -81,6 +81,7 @@
             // 
             _logBox.BackColor = SystemColors.ButtonHighlight;
             _logBox.BorderStyle = BorderStyle.None;
+            _logBox.Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point);
             _logBox.ForeColor = SystemColors.WindowFrame;
             _logBox.Location = new Point(23, 275);
             _logBox.Multiline = true;

@@ -20,16 +20,16 @@ namespace UxGame_Testing_Utility
         {
             if (string.IsNullOrEmpty(_skillIdBox.Text))
             {
-                _logger.ShowLog("[err] skill id is empty.");
+                _logger.ShowLog("skill id is empty.", LogLevel.err);
                 return;
             }
             if (!LocalService.TryLoadConfigDataFromLocal(out var config, out var err))
             {
-                _logger.ShowLog($"[err] failed to load config. property: {err.Name}, reason: {err.Reason}");
+                _logger.ShowLog($"failed to load config. property: {err.Name}, reason: {err.Reason}", LogLevel.err);
                 return;
             }
 
-            _logger.ShowLog("[inf] config load success.");
+            _logger.ShowLog("config load success.", LogLevel.inf);
         }
 
         private void CleanBtn_Click(object sender, EventArgs e)
@@ -50,12 +50,12 @@ namespace UxGame_Testing_Utility
                 {
                     Array.ForEach(
                         errs,
-                        e => _logger.ShowLog($"[err] invalid config. property: {e.Name} reason: {e.Reason}"));
+                        e => _logger.ShowLog($"invalid config. property: {e.Name} reason: {e.Reason}", LogLevel.err));
                     return;
                 }
 
                 LocalService.SaveConfigDataToLocal(config);
-                _logger.ShowLog($"[conf] config data is saved.");
+                _logger.ShowLog($"config data is saved.", LogLevel.inf);
             }
         }
     }

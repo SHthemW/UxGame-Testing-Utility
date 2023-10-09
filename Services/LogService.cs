@@ -16,9 +16,9 @@ namespace UxGame_Testing_Utility.Services
         {
             _logBox = logBox ?? throw new ArgumentNullException(nameof(logBox));
         }    
-        internal void ShowLog(string msg)
+        internal void ShowLog(string msg, LogLevel level)
         {
-            _logStrBuilder.AppendLine(msg);
+            _logStrBuilder.AppendLine($"[{level}] {msg}");
             UpdateLog();
         }
         internal void CleanLog()
@@ -35,5 +35,10 @@ namespace UxGame_Testing_Utility.Services
         {
             _logBox!.Text = _logStrBuilder.ToString();
         }
+    }
+
+    internal enum LogLevel
+    {
+        inf = 0, err
     }
 }
