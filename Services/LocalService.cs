@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,40 @@ namespace UxGame_Testing_Utility.Services
         {
             var jsonStr = JsonConvert.SerializeObject(config, Formatting.Indented);
             WriteTo(CONF_FILE_NAME, jsonStr, Encoding.UTF8);
+        }
+
+        public static bool TryLoadConfigDataFromLocal(out ConfigData config, out ErrInfo err) 
+        {
+            string jsonStr;
+            try
+            {
+                jsonStr = ReadFrom(CONF_FILE_NAME, Encoding.UTF8);
+            }
+            catch (ArgumentException) 
+            {
+                err = new ErrInfo(nameof(jsonStr), nameof(ArgumentException));
+                config = default;
+                return false;
+            }
+
+            JObject jsonObj;
+            try
+            {          
+                jsonObj = JObject.Parse(jsonStr);
+            }
+            catch (JsonReaderException)
+            {
+                err = new ErrInfo(nameof(jsonObj), nameof(JsonReaderException));
+                config = default;
+                return false;
+            }
+
+            err = default;
+            config = new ConfigData(
+                (string)jsonObj[nameof(ConfigData.DataSrcPath)]!,
+                (string)jsonObj[nameof(ConfigData.DplProgPath)]!
+                );
+            return true;
         }
     }
 }

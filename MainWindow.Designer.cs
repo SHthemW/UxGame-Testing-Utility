@@ -75,6 +75,7 @@
             _startBtn.TabIndex = 0;
             _startBtn.Text = "应用测试并部署";
             _startBtn.UseVisualStyleBackColor = true;
+            _startBtn.Click += StartBtn_Click;
             // 
             // _logBox
             // 
