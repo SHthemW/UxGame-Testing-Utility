@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using UxGame_Testing_Utility.Entities;
 
 namespace UxGame_Testing_Utility
 {
@@ -16,5 +17,8 @@ namespace UxGame_Testing_Utility
         {
             InitializeComponent();
         }
+
+        public ConfigData Config => new(_dataSrcPathBox.Text, _deployProgPathBox.Text);
+
     }
 }

@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             TIP_DATASRC = new Label();
-            textBox1 = new TextBox();
-            textBox2 = new TextBox();
+            _dataSrcPathBox = new TextBox();
+            _deployProgPathBox = new TextBox();
             TIP_PROG = new Label();
             TIP = new Label();
             _okBtn = new Button();
@@ -45,19 +45,19 @@
             TIP_DATASRC.TabIndex = 0;
             TIP_DATASRC.Text = "数据源路径:";
             // 
-            // textBox1
+            // _dataSrcPathBox
             // 
-            textBox1.Location = new Point(23, 46);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(207, 23);
-            textBox1.TabIndex = 1;
+            _dataSrcPathBox.Location = new Point(23, 46);
+            _dataSrcPathBox.Name = "_dataSrcPathBox";
+            _dataSrcPathBox.Size = new Size(207, 23);
+            _dataSrcPathBox.TabIndex = 1;
             // 
-            // textBox2
+            // _deployProgPathBox
             // 
-            textBox2.Location = new Point(23, 102);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(207, 23);
-            textBox2.TabIndex = 3;
+            _deployProgPathBox.Location = new Point(23, 102);
+            _deployProgPathBox.Name = "_deployProgPathBox";
+            _deployProgPathBox.Size = new Size(207, 23);
+            _deployProgPathBox.TabIndex = 3;
             // 
             // TIP_PROG
             // 
@@ -80,6 +80,7 @@
             // 
             // _okBtn
             // 
+            _okBtn.DialogResult = DialogResult.OK;
             _okBtn.Location = new Point(89, 196);
             _okBtn.Name = "_okBtn";
             _okBtn.Size = new Size(75, 23);
@@ -89,15 +90,18 @@
             // 
             // ConfigWindow
             // 
+            AcceptButton = _okBtn;
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(255, 247);
             Controls.Add(_okBtn);
             Controls.Add(TIP);
-            Controls.Add(textBox2);
+            Controls.Add(_deployProgPathBox);
             Controls.Add(TIP_PROG);
-            Controls.Add(textBox1);
+            Controls.Add(_dataSrcPathBox);
             Controls.Add(TIP_DATASRC);
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "ConfigWindow";
             Text = "配置";
             ResumeLayout(false);
@@ -107,8 +111,8 @@
         #endregion
 
         private Label TIP_DATASRC;
-        private TextBox textBox1;
-        private TextBox textBox2;
+        private TextBox _dataSrcPathBox;
+        private TextBox _deployProgPathBox;
         private Label TIP_PROG;
         private Label TIP;
         private Button _okBtn;

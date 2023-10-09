@@ -117,6 +117,7 @@
             _configBtn.TabIndex = 3;
             _configBtn.Text = "配置";
             _configBtn.UseVisualStyleBackColor = true;
+            _configBtn.Click += ConfigBtn_Click;
             // 
             // _cleanBtn
             // 
@@ -126,6 +127,7 @@
             _cleanBtn.TabIndex = 4;
             _cleanBtn.Text = "清除";
             _cleanBtn.UseVisualStyleBackColor = true;
+            _cleanBtn.Click += CleanBtn_Click;
             // 
             // MainWindow
             // 
@@ -141,7 +143,6 @@
             MaximizeBox = false;
             Name = "MainWindow";
             Text = "测试工具";
-            Load += MainWindow_Load;
             CENTER_PANEL.ResumeLayout(false);
             CENTER_PANEL.PerformLayout();
             ResumeLayout(false);
