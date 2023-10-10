@@ -86,6 +86,8 @@
             _logBox.Location = new Point(23, 275);
             _logBox.Multiline = true;
             _logBox.Name = "_logBox";
+            _logBox.ReadOnly = true;
+            _logBox.ScrollBars = ScrollBars.Vertical;
             _logBox.Size = new Size(247, 94);
             _logBox.TabIndex = 3;
             _logBox.Text = "Welcome.";
