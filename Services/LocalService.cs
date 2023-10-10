@@ -35,7 +35,7 @@ namespace UxGame_Testing_Utility.Services
             WriteTo(CONF_FILE_NAME, jsonStr, Encoding.UTF8);
         }
 
-        public static bool TryLoadConfigDataFromLocal(out ConfigData config, out ErrInfo err) 
+        public static bool TryLoadConfigDataFromLocal(out ConfigData config, out string? errmsg) 
         {
             string jsonStr;
             try
@@ -44,7 +44,7 @@ namespace UxGame_Testing_Utility.Services
             }
             catch (ArgumentException) 
             {
-                err = new ErrInfo(nameof(jsonStr), nameof(ArgumentException));
+                errmsg = "failed to read json from local.";
                 config = default;
                 return false;
             }
@@ -56,12 +56,12 @@ namespace UxGame_Testing_Utility.Services
             }
             catch (JsonReaderException)
             {
-                err = new ErrInfo(nameof(jsonObj), nameof(JsonReaderException));
+                errmsg = "failed to parse json str.";
                 config = default;
                 return false;
             }
 
-            err = default;
+            errmsg = default;
             config = new ConfigData(
                 (string)jsonObj[nameof(ConfigData.DataSrcPath)]!,
                 (string)jsonObj[nameof(ConfigData.DplProgPath)]!

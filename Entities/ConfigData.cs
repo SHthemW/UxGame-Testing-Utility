@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,46 +24,45 @@ namespace UxGame_Testing_Utility.Entities
                 $"{nameof(DplProgPath)}: {DplProgPath} \n";
         }
 
-        public static bool CheckVaild(ConfigData conf, out ErrInfo[] errs)
+        public static bool CheckVaild(ConfigData conf, out string?[] errmsgs)
         {
-            List<ErrInfo> errList = new();
+            List<string?> errList = new();
 
             if (!PathIsValid(conf.DataSrcPath, out var reason_datasrc))
-                errList.Add(new ErrInfo(nameof(conf.DataSrcPath), reason_datasrc.ToString()));
+                errList.Add($"config {nameof(conf.DataSrcPath)} is invalid. code: {reason_datasrc}");
 
             if (!PathIsValid(conf.DplProgPath, out var reason_dplprog))
-                errList.Add(new ErrInfo(nameof(conf.DplProgPath), reason_dplprog.ToString()));
+                errList.Add($"config {nameof(conf.DplProgPath)} is invalid. code: {reason_dplprog}");
 
-            errs = errList.ToArray();
-            return errs.Length == 0;
+            errmsgs = errList.ToArray();
+            return errmsgs.Length == 0;
 
-            static bool PathIsValid(string path, out string result) 
+            static bool PathIsValid(string path, out string? errmsg) 
             {
                 if (string.IsNullOrEmpty(path))
                 {
-                    result = "PathStrIsEmpty";
+                    errmsg = "PathStrIsEmpty";
                     return false;
                 }
 
-                string fileName;
-
+                string fileExtName;
                 try
                 {
-                    fileName = Path.GetExtension(path);
+                    fileExtName = Path.GetExtension(path);
                 }
                 catch (ArgumentException)
                 {
-                    result = "PathStrBadFormat";
+                    errmsg = "PathStrBadFormat";
                     return false;
                 }
 
-                if (string.IsNullOrEmpty(fileName))
+                if (string.IsNullOrEmpty(fileExtName))
                 {
-                    result = "FileNotFound";
+                    errmsg = "FileNotFound";
                     return false;
                 }
 
-                result = "OK";
+                errmsg = null;
                 return true;
             }
         }
