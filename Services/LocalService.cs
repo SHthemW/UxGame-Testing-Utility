@@ -29,13 +29,13 @@ namespace UxGame_Testing_Utility.Services
          *  details
          */
 
-        public static void SaveConfigDataToLocal(ConfigData config)
+        public static void SaveConfigDataToLocal(DataConfig config)
         {
             var jsonStr = JsonConvert.SerializeObject(config, Formatting.Indented);
             WriteTo(CONF_FILE_NAME, jsonStr, Encoding.UTF8);
         }
 
-        public static bool TryLoadConfigDataFromLocal(out ConfigData config, out string? errmsg) 
+        public static bool TryLoadConfigDataFromLocal(out DataConfig config, out string? errmsg) 
         {
             string jsonStr;
             try
@@ -62,9 +62,9 @@ namespace UxGame_Testing_Utility.Services
             }
 
             errmsg = default;
-            config = new ConfigData(
-                (string)jsonObj[nameof(ConfigData.DataSrcPath)]!,
-                (string)jsonObj[nameof(ConfigData.DplProgPath)]!
+            config = new DataConfig(
+                (string)jsonObj[nameof(DataConfig.DataSrcPath)]!,
+                (string)jsonObj[nameof(DataConfig.DplProgPath)]!
                 );
             return true;
         }

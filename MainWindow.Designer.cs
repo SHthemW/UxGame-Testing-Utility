@@ -117,7 +117,7 @@
             _configBtn.Name = "_configBtn";
             _configBtn.Size = new Size(75, 23);
             _configBtn.TabIndex = 3;
-            _configBtn.Text = "配置";
+            _configBtn.Text = "设置";
             _configBtn.UseVisualStyleBackColor = true;
             _configBtn.Click += ConfigBtn_Click;
             // 

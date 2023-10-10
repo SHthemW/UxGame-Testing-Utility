@@ -22,5 +22,10 @@ namespace UxGame_Testing_Utility.Entities
         {
             return id1[..3] == id2[..3];
         }
+
+        public override string ToString()
+        {
+            return $"id: {this.Id}, bullet: {this.BulletId}, Shooter: {this.ShooterId}";
+        }
     }
 }

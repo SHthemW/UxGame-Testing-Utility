@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace UxGame_Testing_Utility.Entities
 {
-    public readonly struct ConfigData
+    public readonly struct DataConfig
     {
         public string DataSrcPath { get; private init; }
         public string DplProgPath { get; private init; }
-        public ConfigData(string dataSrcPath, string dplProgPath)
+        public DataConfig(string dataSrcPath, string dplProgPath)
         {
             DataSrcPath = dataSrcPath ?? throw new ArgumentNullException(nameof(dataSrcPath));
             DplProgPath = dplProgPath ?? throw new ArgumentNullException(nameof(dplProgPath));
@@ -24,7 +24,7 @@ namespace UxGame_Testing_Utility.Entities
                 $"{nameof(DplProgPath)}: {DplProgPath} \n";
         }
 
-        public static bool CheckVaild(ConfigData conf, out string?[] errmsgs)
+        public static bool CheckVaild(DataConfig conf, out string?[] errmsgs)
         {
             List<string?> errList = new();
 
@@ -56,4 +56,14 @@ namespace UxGame_Testing_Utility.Entities
             }
         }
     }  
+
+    public readonly struct UserConfig
+    {
+        public bool ShowSKillDetailsAfterLoad { get; private init; }
+
+        public UserConfig(bool showSKillDetailsAfterLoad)
+        {
+            ShowSKillDetailsAfterLoad = showSKillDetailsAfterLoad;
+        }
+    }
 }

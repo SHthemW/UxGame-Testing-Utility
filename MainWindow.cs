@@ -25,12 +25,12 @@ namespace UxGame_Testing_Utility
                 _logger.ShowLog("skill id is empty.", LogLevel.err);
                 return;
             }
-            if (!LocalService.TryLoadConfigDataFromLocal(out var config, out var errmsg_local))
+            if (!LocalService.TryLoadConfigDataFromLocal(out var dataConf, out var errmsg_local))
             {
                 _logger.ShowLog(errmsg_local!, LogLevel.err);
                 return;
             }
-            if (!ConfigData.CheckVaild(config, out var errmsg_conf))
+            if (!DataConfig.CheckVaild(dataConf, out var errmsg_conf))
             {
                 _logger.ShowLog(errmsg_conf!, LogLevel.err);
                 return;
@@ -42,8 +42,8 @@ namespace UxGame_Testing_Utility
 
             #region Load Excel File
 
-            var dataTab = new ExcelService(config.DataSrcPath, out var errmsg_tabfile);
-            if (errmsg_tabfile != null) 
+            var dataTab = new ExcelService(dataConf.DataSrcPath, out var errmsg_tabfile);
+            if (errmsg_tabfile != null)
             {
                 _logger.ShowLog(errmsg_tabfile, LogLevel.err);
                 return;
@@ -74,9 +74,9 @@ namespace UxGame_Testing_Utility
 
             if (result is DialogResult.OK)
             {
-                var config = confWindow.Config;
+                var config = confWindow.DataConfig;
 
-                if (!ConfigData.CheckVaild(config, out var errmsgs))
+                if (!DataConfig.CheckVaild(config, out var errmsgs))
                 {
                     _logger.ShowLog(errmsgs!, LogLevel.err);
                     return;

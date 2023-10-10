@@ -17,18 +17,27 @@ namespace UxGame_Testing_Utility
         public ConfigWindow()
         {
             InitializeComponent();
-            
-            if (LocalService.TryLoadConfigDataFromLocal(out var config, out var err)) 
-                this.Config = config;
+
+            if (LocalService.TryLoadConfigDataFromLocal(out var config, out var err))
+                this.DataConfig = config;
         }
 
-        public ConfigData Config
+        public DataConfig DataConfig
         {
             get => new(_dataSrcPathBox.Text, _deployProgPathBox.Text);
             private set
             {
                 _dataSrcPathBox.Text = value.DataSrcPath;
                 _deployProgPathBox.Text = value.DplProgPath;
+            }
+        }
+
+        public UserConfig UserConfig
+        {
+            get => new(_enableShowSkillDetailsChkBox.Checked);
+            private set
+            {
+                _enableShowSkillDetailsChkBox.Checked = value.ShowSKillDetailsAfterLoad;
             }
         }
     }
