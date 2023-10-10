@@ -18,6 +18,8 @@ namespace UxGame_Testing_Utility
 
         private void StartBtn_Click(object sender, EventArgs e)
         {
+            #region Load Config
+
             if (string.IsNullOrEmpty(_skillIdBox.Text))
             {
                 _logger.ShowLog("skill id is empty.", LogLevel.err);
@@ -29,7 +31,30 @@ namespace UxGame_Testing_Utility
                 return;
             }
 
-            _logger.ShowLog("config load success.", LogLevel.inf);
+            _logger.ShowLog("finished loading config.", LogLevel.inf);
+
+            #endregion
+
+            #region Load Excel File
+
+            var dataTab = new ExcelService(config.DataSrcPath, out var errmsg_tabfile);
+            if (errmsg_tabfile != null) 
+            {
+                _logger.ShowLog(errmsg_tabfile, LogLevel.err);
+                return;
+            }
+
+            _logger.ShowLog("finished open xlsx.", LogLevel.inf);
+
+            #endregion
+
+            if (!dataTab.GetSkillGroup(_skillIdBox.Text, out var group, out var errmsg_skill))
+            {
+                _logger.ShowLog(errmsg_skill!, LogLevel.err);
+                return;
+            }
+
+            _logger.ShowLog($"finished get, found {group.Count} skills.", LogLevel.inf);
         }
 
         private void CleanBtn_Click(object sender, EventArgs e)
