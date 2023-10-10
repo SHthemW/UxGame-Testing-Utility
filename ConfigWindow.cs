@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using UxGame_Testing_Utility.Entities;
+using UxGame_Testing_Utility.Services;
 
 namespace UxGame_Testing_Utility
 {
@@ -16,9 +17,19 @@ namespace UxGame_Testing_Utility
         public ConfigWindow()
         {
             InitializeComponent();
+            
+            if (LocalService.TryLoadConfigDataFromLocal(out var config, out var err)) 
+                this.Config = config;
         }
 
-        public ConfigData Config => new(_dataSrcPathBox.Text, _deployProgPathBox.Text);
-
+        public ConfigData Config
+        {
+            get => new(_dataSrcPathBox.Text, _deployProgPathBox.Text);
+            private set
+            {
+                _dataSrcPathBox.Text = value.DataSrcPath;
+                _deployProgPathBox.Text = value.DplProgPath;
+            }
+        }
     }
 }
