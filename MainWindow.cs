@@ -25,9 +25,14 @@ namespace UxGame_Testing_Utility
                 _logger.ShowLog("skill id is empty.", LogLevel.err);
                 return;
             }
-            if (!LocalService.TryLoadConfigDataFromLocal(out var dataConf, out var errmsg_local))
+            if (!LocalService.TryLoadConfigDataFromLocal(out DataConfig dataConf, out var errmsg_local_data))
             {
-                _logger.ShowLog(errmsg_local!, LogLevel.err);
+                _logger.ShowLog(errmsg_local_data!, LogLevel.err);
+                return;
+            }
+            if (!LocalService.TryLoadConfigDataFromLocal(out UserConfig userConf, out var errmsg_local_user))
+            {
+                _logger.ShowLog(errmsg_local_user!, LogLevel.err);
                 return;
             }
             if (!DataConfig.CheckVaild(dataConf, out var errmsg_conf))
@@ -53,13 +58,23 @@ namespace UxGame_Testing_Utility
 
             #endregion
 
+            #region Get Skill Group
+
             if (!dataTab.GetSkillGroup(_skillIdBox.Text, out var group, out var errmsg_skill))
             {
                 _logger.ShowLog(errmsg_skill!, LogLevel.err);
                 return;
             }
-
             _logger.ShowLog($"finished get, found {group.Count} skills.", LogLevel.inf);
+
+            if (userConf.ShowSKillDetailsAfterLoad)
+            {
+                Array.ForEach(
+                    group.Skills,
+                    skill => _logger.ShowLog(skill.ToString(), LogLevel.inf));
+            }
+
+            #endregion
         }
 
         private void CleanBtn_Click(object sender, EventArgs e)
@@ -74,15 +89,17 @@ namespace UxGame_Testing_Utility
 
             if (result is DialogResult.OK)
             {
-                var config = confWindow.DataConfig;
+                var dataConf = confWindow.DataConfig;
+                var userConf = confWindow.UserConfig;
 
-                if (!DataConfig.CheckVaild(config, out var errmsgs))
+                if (!DataConfig.CheckVaild(dataConf, out var errmsgs))
                 {
                     _logger.ShowLog(errmsgs!, LogLevel.err);
                     return;
                 }
 
-                LocalService.SaveConfigDataToLocal(config);
+                LocalService.SaveConfigDataToLocal(dataConf);
+                LocalService.SaveConfigDataToLocal(userConf);
                 _logger.ShowLog($"config data is saved.", LogLevel.inf);
             }
         }

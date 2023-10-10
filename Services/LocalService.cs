@@ -1,7 +1,10 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NPOI.SS.Formula.Functions;
+using Org.BouncyCastle.Asn1.X509.Qualified;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -12,8 +15,6 @@ namespace UxGame_Testing_Utility.Services
 {
     internal static class LocalService
     {
-        private const string CONF_FILE_NAME = "config_save";
-
         private static string ReadFrom(string filePath, Encoding encoding)
         {
             using StreamReader sr = new(filePath, encoding);
@@ -29,24 +30,30 @@ namespace UxGame_Testing_Utility.Services
          *  details
          */
 
-        public static void SaveConfigDataToLocal(DataConfig config)
+        public static void SaveConfigDataToLocal<T>(T config) where T : class
         {
             var jsonStr = JsonConvert.SerializeObject(config, Formatting.Indented);
-            WriteTo(CONF_FILE_NAME, jsonStr, Encoding.UTF8);
+            WriteTo(typeof(T).ToString(), jsonStr, Encoding.UTF8);
         }
 
-        public static bool TryLoadConfigDataFromLocal(out DataConfig config, out string? errmsg) 
+        public static bool TryLoadConfigDataFromLocal<T>(out T config, out string? errmsg) where T : class, new()
         {
+            config = new();
+
             string jsonStr;
             try
             {
-                jsonStr = ReadFrom(CONF_FILE_NAME, Encoding.UTF8);
+                jsonStr = ReadFrom(typeof(T).ToString(), Encoding.UTF8);
             }
             catch (ArgumentException) 
             {
                 errmsg = "failed to read json from local.";
-                config = default;
                 return false;
+            }
+            catch (FileNotFoundException) 
+            {
+                errmsg = "json file is not exists.";
+                return true;
             }
 
             JObject jsonObj;
@@ -57,15 +64,33 @@ namespace UxGame_Testing_Utility.Services
             catch (JsonReaderException)
             {
                 errmsg = "failed to parse json str.";
-                config = default;
                 return false;
+            }
+            
+            foreach (var prop in typeof(T).GetProperties())
+            {             
+                var type = prop.PropertyType;
+                var value = jsonObj[prop.Name];   
+
+                dynamic? result = type switch
+                {
+                    Type t when t == typeof(string) => Convert.ToString(value),
+                    Type t when t == typeof(float) => Convert.ToSingle(value),
+                    Type t when t == typeof(bool) => Convert.ToBoolean(value),
+                    Type t when t == typeof(int) => Convert.ToInt32(value),
+                    _ => null
+                };
+
+                if (result is null)
+                {
+                    errmsg = $"type <{type}> cannot be convert.";
+                    return false;
+                }
+
+                prop.SetValue(config, result);
             }
 
             errmsg = default;
-            config = new DataConfig(
-                (string)jsonObj[nameof(DataConfig.DataSrcPath)]!,
-                (string)jsonObj[nameof(DataConfig.DplProgPath)]!
-                );
             return true;
         }
     }

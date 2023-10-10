@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -17,9 +18,10 @@ namespace UxGame_Testing_Utility
         public ConfigWindow()
         {
             InitializeComponent();
-
-            if (LocalService.TryLoadConfigDataFromLocal(out var config, out var err))
-                this.DataConfig = config;
+            if (LocalService.TryLoadConfigDataFromLocal(out DataConfig dataConf, out _))
+                this.DataConfig = dataConf;
+            if (LocalService.TryLoadConfigDataFromLocal(out UserConfig userConf, out _))
+                this.UserConfig = userConf;
         }
 
         public DataConfig DataConfig
@@ -31,7 +33,6 @@ namespace UxGame_Testing_Utility
                 _deployProgPathBox.Text = value.DplProgPath;
             }
         }
-
         public UserConfig UserConfig
         {
             get => new(_enableShowSkillDetailsChkBox.Checked);

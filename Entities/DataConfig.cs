@@ -7,23 +7,21 @@ using System.Threading.Tasks;
 
 namespace UxGame_Testing_Utility.Entities
 {
-    public readonly struct DataConfig
+    public sealed class DataConfig
     {
-        public string DataSrcPath { get; private init; }
-        public string DplProgPath { get; private init; }
+        public string DataSrcPath { get; init; }
+        public string DplProgPath { get; init; }
+
+        public DataConfig() 
+        {
+            DataSrcPath = string.Empty;
+            DplProgPath = string.Empty;
+        }
         public DataConfig(string dataSrcPath, string dplProgPath)
         {
             DataSrcPath = dataSrcPath ?? throw new ArgumentNullException(nameof(dataSrcPath));
             DplProgPath = dplProgPath ?? throw new ArgumentNullException(nameof(dplProgPath));
         }
-
-        public override string ToString()
-        {
-            return 
-                $"{nameof(DataSrcPath)}: {DataSrcPath} \n" +
-                $"{nameof(DplProgPath)}: {DplProgPath} \n";
-        }
-
         public static bool CheckVaild(DataConfig conf, out string?[] errmsgs)
         {
             List<string?> errList = new();
@@ -55,15 +53,29 @@ namespace UxGame_Testing_Utility.Entities
                 return true;
             }
         }
+
+        public override string ToString()
+        {
+            return
+                $"{nameof(DataSrcPath)}: {DataSrcPath} \n" +
+                $"{nameof(DplProgPath)}: {DplProgPath} \n";
+        }
     }  
 
-    public readonly struct UserConfig
+    public sealed class UserConfig
     {
         public bool ShowSKillDetailsAfterLoad { get; private init; }
 
+        public UserConfig() { }
         public UserConfig(bool showSKillDetailsAfterLoad)
         {
             ShowSKillDetailsAfterLoad = showSKillDetailsAfterLoad;
+        }
+
+        public override string ToString()
+        {
+            return
+                $"{nameof(ShowSKillDetailsAfterLoad)}: {ShowSKillDetailsAfterLoad} \n";
         }
     }
 }
