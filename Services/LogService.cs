@@ -21,6 +21,12 @@ namespace UxGame_Testing_Utility.Services
             _logStrBuilder.AppendLine($"[{level}] {msg}");
             UpdateLog();
         }
+        internal void ShowLog(string[] msgs, LogLevel level)
+        {
+            Array.ForEach(
+                msgs,
+                msg => ShowLog(msg, level));
+        }
         internal void CleanLog()
         {
             _logStrBuilder.Clear();

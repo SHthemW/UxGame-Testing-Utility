@@ -29,10 +29,10 @@ namespace UxGame_Testing_Utility.Entities
             List<string?> errList = new();
 
             if (!PathIsValid(conf.DataSrcPath, out var reason_datasrc))
-                errList.Add($"config {nameof(conf.DataSrcPath)} is invalid. code: {reason_datasrc}");
+                errList.Add($"config {nameof(conf.DataSrcPath)} is invalid. {reason_datasrc}");
 
             if (!PathIsValid(conf.DplProgPath, out var reason_dplprog))
-                errList.Add($"config {nameof(conf.DplProgPath)} is invalid. code: {reason_dplprog}");
+                errList.Add($"config {nameof(conf.DplProgPath)} is invalid. {reason_dplprog}");
 
             errmsgs = errList.ToArray();
             return errmsgs.Length == 0;
@@ -41,24 +41,13 @@ namespace UxGame_Testing_Utility.Entities
             {
                 if (string.IsNullOrEmpty(path))
                 {
-                    errmsg = "PathStrIsEmpty";
+                    errmsg = "path str is empty.";
                     return false;
                 }
 
-                string fileExtName;
-                try
+                if (!File.Exists(path))
                 {
-                    fileExtName = Path.GetExtension(path);
-                }
-                catch (ArgumentException)
-                {
-                    errmsg = "PathStrBadFormat";
-                    return false;
-                }
-
-                if (string.IsNullOrEmpty(fileExtName))
-                {
-                    errmsg = "FileNotFound";
+                    errmsg = "such file was not found.";
                     return false;
                 }
 

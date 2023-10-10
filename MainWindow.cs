@@ -25,7 +25,12 @@ namespace UxGame_Testing_Utility
                 _logger.ShowLog("skill id is empty.", LogLevel.err);
                 return;
             }
-            if (!LocalService.TryLoadConfigDataFromLocal(out var config, out var errmsg_conf))
+            if (!LocalService.TryLoadConfigDataFromLocal(out var config, out var errmsg_local))
+            {
+                _logger.ShowLog(errmsg_local!, LogLevel.err);
+                return;
+            }
+            if (!ConfigData.CheckVaild(config, out var errmsg_conf))
             {
                 _logger.ShowLog(errmsg_conf!, LogLevel.err);
                 return;
@@ -73,9 +78,7 @@ namespace UxGame_Testing_Utility
 
                 if (!ConfigData.CheckVaild(config, out var errmsgs))
                 {
-                    Array.ForEach(
-                        errmsgs,
-                        e => _logger.ShowLog(e!, LogLevel.err));
+                    _logger.ShowLog(errmsgs!, LogLevel.err);
                     return;
                 }
 
