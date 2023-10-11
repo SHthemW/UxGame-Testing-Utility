@@ -54,11 +54,11 @@
             // TIP
             // 
             TIP.AutoSize = true;
-            TIP.Location = new Point(53, 28);
+            TIP.Location = new Point(47, 28);
             TIP.Name = "TIP";
-            TIP.Size = new Size(141, 17);
+            TIP.Size = new Size(153, 17);
             TIP.TabIndex = 2;
-            TIP.Text = "在此输入待测试技能的ID";
+            TIP.Text = "输入待测试技能的ID或名称";
             // 
             // _skillIdBox
             // 

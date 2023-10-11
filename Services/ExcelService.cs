@@ -12,11 +12,13 @@ namespace UxGame_Testing_Utility.Services
         private readonly IWorkbook? _workbook;     
 
         private readonly int _skillIdColumnIndex;
+        private readonly int _skillNmColumnIndex;
         private readonly int _buletIdColumnIndex;
         private readonly int _shotrIdColumnIndex;
 
         private const string DATA_SHEET_NAME = "Data";
         private const string SKILLID_COLNAME = "Id";
+        private const string SKILLNM_COLNAME = "Note";
         private const string BULETID_COLNAME = "BulletId";
         private const string SHOTRID_COLNAME = "ShooterId";
 
@@ -47,6 +49,7 @@ namespace UxGame_Testing_Utility.Services
             try
             {
                 _skillIdColumnIndex = TryGetColumnIndex(SKILLID_COLNAME);
+                _skillNmColumnIndex = TryGetColumnIndex(SKILLNM_COLNAME);
                 _buletIdColumnIndex = TryGetColumnIndex(BULETID_COLNAME);
                 _shotrIdColumnIndex = TryGetColumnIndex(SHOTRID_COLNAME);
             }
@@ -62,20 +65,26 @@ namespace UxGame_Testing_Utility.Services
             }
             #endregion 
         }
-        internal bool GetSkillGroup(string targetId, out SkillGroup group, out string? errmsg)
+        internal bool GetSkillGroup(string idOrName, out SkillGroup group, out string? errmsg)
         {
             List<Skill> skillsInGroup = new();
+            string currentName = string.Empty;
+
             for (int i = 1; i <= DataSheet!.LastRowNum; i++)
             {
                 IRow row = DataSheet.GetRow(i);
-                if (row == null)
-                    continue;
 
+                // get id in current row
                 var currentId = row.GetCell(_skillIdColumnIndex)?.ToString();
                 if (string.IsNullOrEmpty(currentId))
                     continue;
 
-                if (Skill.IsSame(currentId, targetId))
+                // get name in current row
+                var nameInRow = row.GetCell(_skillNmColumnIndex)?.ToString();
+                if (!string.IsNullOrEmpty(nameInRow))
+                    currentName = nameInRow;
+
+                if (Skill.IsSameGroup(currentId, idOrName) || currentName == idOrName)
                 {
                     skillsInGroup.Add(new Skill(
                         Id: currentId,
@@ -94,7 +103,7 @@ namespace UxGame_Testing_Utility.Services
             else
             {
                 group = default;
-                errmsg = "skill in given id was not found.";
+                errmsg = $"skill [{idOrName}] was not found.";
                 return false;
             }
         }
@@ -105,7 +114,7 @@ namespace UxGame_Testing_Utility.Services
             foreach (var data in skillGroup.Skills)
             {
                 var currentAreaId = DataSheet.GetRow(rowIndex).GetCell(_skillIdColumnIndex).ToString();
-                if (!Skill.IsSame(currentAreaId!, testAreaSkillId!))
+                if (!Skill.IsSameGroup(currentAreaId!, testAreaSkillId!))
                 {
                     errmsg = 
                         $"test case writing overflow: " +

@@ -18,8 +18,11 @@ namespace UxGame_Testing_Utility.Entities
         /// <param name="id1"></param>
         /// <param name="id2"></param>
         /// <returns></returns>
-        public static bool IsSame(string id1, string id2) 
+        public static bool IsSameGroup(string id1, string id2) 
         {
+            if (id1.Length < 3 || id2.Length < 3)
+                return false;
+
             return id1[..3] == id2[..3];
         }
 
