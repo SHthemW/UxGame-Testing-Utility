@@ -105,12 +105,13 @@
             // AUTHOR
             // 
             AUTHOR.AutoSize = true;
+            AUTHOR.Font = new Font("Trebuchet MS", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
             AUTHOR.ForeColor = SystemColors.ButtonShadow;
-            AUTHOR.Location = new Point(94, 56);
+            AUTHOR.Location = new Point(88, 56);
             AUTHOR.Name = "AUTHOR";
-            AUTHOR.Size = new Size(97, 17);
+            AUTHOR.Size = new Size(109, 18);
             AUTHOR.TabIndex = 2;
-            AUTHOR.Text = "design by SHW";
+            AUTHOR.Text = "designed by SHW";
             // 
             // _configBtn
             // 
