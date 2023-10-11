@@ -1,7 +1,5 @@
-﻿using NPOI.OpenXmlFormats.Spreadsheet;
-using NPOI.SS.UserModel;
+﻿using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
-using System.Diagnostics;
 using UxGame_Testing_Utility.Entities;
 
 namespace UxGame_Testing_Utility.Services
@@ -16,6 +14,8 @@ namespace UxGame_Testing_Utility.Services
         private readonly int _buletIdColumnIndex;
         private readonly int _shotrIdColumnIndex;
 
+        private const int    IO_TRY_SPACE_MS = 50;
+        private const int    MAX_IO_TRYTIMES = 10;     
         private const string DATA_SHEET_NAME = "Data";
         private const string SKILLID_COLNAME = "Id";
         private const string SKILLNM_COLNAME = "Note";
@@ -33,16 +33,24 @@ namespace UxGame_Testing_Utility.Services
 
             _filePath = excelFilePath ?? throw new ArgumentNullException(nameof(excelFilePath));
 
-            try
+            for (int times = 0; _workbook == null && times < MAX_IO_TRYTIMES; times ++)
             {
-                using FileStream file = new(_filePath, FileMode.Open, FileAccess.ReadWrite);          
-                _workbook = new XSSFWorkbook(file);
+                try
+                {
+                    using FileStream file = new(_filePath, FileMode.Open, FileAccess.ReadWrite);
+                    _workbook = new XSSFWorkbook(file);
+                }
+                catch (IOException)
+                {
+                    Thread.Sleep(IO_TRY_SPACE_MS);
+                }
             }
-            catch (IOException)
+            if (_workbook == null)
             {
                 errmsg = "file is in occupying, please close and retry.";
                 return;
             }
+
             #endregion
 
             #region Init Basic Properties

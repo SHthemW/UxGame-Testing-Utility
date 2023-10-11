@@ -44,6 +44,8 @@ namespace UxGame_Testing_Utility
             _logger.ShowLog("finished loading config.", LogLevel.inf);
 
             #endregion
+            
+            ProcessService.KillWindow($"{Path.GetFileName(dataConf.DataSrcPath)} - LibreOffice Calc");
 
             // excel file name: dataTab
             #region Load Excel File
@@ -87,6 +89,11 @@ namespace UxGame_Testing_Utility
             _logger.ShowLog($"finished flush data.", LogLevel.inf);
 
             #endregion
+
+            ProcessService.Startup(
+                @"C:\\Program Files\\LibreOffice\\program\\scalc.exe", 
+                dataConf.DataSrcPath
+                );
         }
 
         private void CleanBtn_Click(object sender, EventArgs e)
