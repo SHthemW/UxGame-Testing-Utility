@@ -1,4 +1,4 @@
-﻿using NPOI.SS.Formula.PTG;
+﻿using NPOI.OpenXmlFormats.Spreadsheet;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Diagnostics;
@@ -8,7 +8,8 @@ namespace UxGame_Testing_Utility.Services
 {
     internal sealed class ExcelService
     {
-        private readonly ISheet? _excelSheet;
+        private readonly string? _filePath;
+        private readonly IWorkbook? _workbook;     
 
         private readonly int _skillIdColumnIndex;
         private readonly int _buletIdColumnIndex;
@@ -19,19 +20,21 @@ namespace UxGame_Testing_Utility.Services
         private const string BULETID_COLNAME = "BulletId";
         private const string SHOTRID_COLNAME = "ShooterId";
 
+        private ISheet DataSheet => 
+            _workbook!.GetSheet(DATA_SHEET_NAME);
+
         internal ExcelService(string excelFilePath, out string? errmsg)
         {
             errmsg = default;
 
             #region Init Excel File
+
+            _filePath = excelFilePath ?? throw new ArgumentNullException(nameof(excelFilePath));
+
             try
             {
-                using FileStream file = new(
-                excelFilePath ?? throw new ArgumentNullException(nameof(excelFilePath)),
-                FileMode.Open,
-                FileAccess.ReadWrite
-                );
-                _excelSheet = new XSSFWorkbook(file).GetSheet(DATA_SHEET_NAME);
+                using FileStream file = new(_filePath, FileMode.Open, FileAccess.ReadWrite);          
+                _workbook = new XSSFWorkbook(file);
             }
             catch (IOException)
             {
@@ -62,9 +65,9 @@ namespace UxGame_Testing_Utility.Services
         internal bool GetSkillGroup(string targetId, out SkillGroup group, out string? errmsg)
         {
             List<Skill> skillsInGroup = new();
-            for (int i = 1; i <= _excelSheet!.LastRowNum; i++)
+            for (int i = 1; i <= DataSheet!.LastRowNum; i++)
             {
-                IRow row = _excelSheet.GetRow(i);
+                IRow row = DataSheet.GetRow(i);
                 if (row == null)
                     continue;
 
@@ -97,11 +100,11 @@ namespace UxGame_Testing_Utility.Services
         }
         internal bool ApplySkillGroupDataOn(SkillGroup skillGroup, int rowIndex, out string? errmsg)
         {
-            var testAreaSkillId = _excelSheet!.GetRow(rowIndex).GetCell(_skillIdColumnIndex).ToString();
+            var testAreaSkillId = DataSheet!.GetRow(rowIndex).GetCell(_skillIdColumnIndex).ToString();
 
             foreach (var data in skillGroup.Skills)
             {
-                var currentAreaId = _excelSheet.GetRow(rowIndex).GetCell(_skillIdColumnIndex).ToString();
+                var currentAreaId = DataSheet.GetRow(rowIndex).GetCell(_skillIdColumnIndex).ToString();
                 if (!Skill.IsSame(currentAreaId!, testAreaSkillId!))
                 {
                     errmsg = 
@@ -112,25 +115,42 @@ namespace UxGame_Testing_Utility.Services
                     return false;
                 }
 
-                _excelSheet.GetRow(rowIndex).CreateCell(_buletIdColumnIndex).SetCellValue(data.BulletId);
-                _excelSheet.GetRow(rowIndex).CreateCell(_shotrIdColumnIndex).SetCellValue(data.ShooterId);
+                var bulletIdOrigStyle = DataSheet.GetRow(rowIndex).GetCell(_buletIdColumnIndex).CellStyle;
+                var shoterIdOrigStyle = DataSheet.GetRow(rowIndex).GetCell(_shotrIdColumnIndex).CellStyle;
+
+                var bulletIdCell = DataSheet.GetRow(rowIndex).CreateCell(_buletIdColumnIndex);
+                var shoterIdCell = DataSheet.GetRow(rowIndex).CreateCell(_shotrIdColumnIndex);
+
+                bulletIdCell.SetCellValue(data.BulletId);
+                shoterIdCell.SetCellValue(data.ShooterId);
+                bulletIdCell.CellStyle = bulletIdOrigStyle;
+                shoterIdCell.CellStyle = shoterIdOrigStyle;
+
                 rowIndex++;
+            }
+
+            try
+            {
+                using FileStream file = new(_filePath!, FileMode.Create, FileAccess.Write);
+                _workbook?.Write(file);
+            }
+            catch (IOException e)
+            {
+                errmsg = e.Message;
+                return false;
             }
 
             errmsg = default;
             return true;
         }
 
-        private ExcelService()
-        {
-            _excelSheet = default;
-        }
+        private ExcelService() { }
         private int TryGetColumnIndex(string columnName)
         {
-            if (_excelSheet == null)
+            if (DataSheet == null)
                 throw new NullReferenceException();
 
-            var headerRow = _excelSheet.GetRow(0);
+            var headerRow = DataSheet.GetRow(0);
             for (int i = 0; i < headerRow.LastCellNum; i++)
                 if (headerRow.GetCell(i).ToString() == columnName)
                     return i;

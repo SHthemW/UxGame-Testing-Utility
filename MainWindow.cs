@@ -84,7 +84,7 @@ namespace UxGame_Testing_Utility
                 _logger.ShowLog(errmsg_write!, LogLevel.err);
                 return;
             }
-            _logger.ShowLog($"finished flush data. found {group.Count} skills.", LogLevel.inf);
+            _logger.ShowLog($"finished flush data.", LogLevel.inf);
 
             #endregion
         }
