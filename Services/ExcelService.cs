@@ -1,16 +1,8 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NPOI;
+﻿using NPOI.SS.Formula.PTG;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
-using System.Numerics;
+using System.Diagnostics;
 using UxGame_Testing_Utility.Entities;
-using NPOI.SS.Formula.Functions;
-using NPOI.SS.Formula.PTG;
 
 namespace UxGame_Testing_Utility.Services
 {
@@ -31,7 +23,7 @@ namespace UxGame_Testing_Utility.Services
                 using FileStream file = new(
                 excelFilePath ?? throw new ArgumentNullException(nameof(excelFilePath)),
                 FileMode.Open,
-                FileAccess.Read
+                FileAccess.ReadWrite
                 );
                 _excelFile = new XSSFWorkbook(file);
             }
@@ -100,6 +92,43 @@ namespace UxGame_Testing_Utility.Services
                 errmsg = "skill in given id was not found.";
                 return false;
             }
+        }
+        internal bool ApplySkillGroupDataOn(SkillGroup skillGroup, int rowIndex, out string? errmsg)
+        {
+            var sheet = _excelFile!.GetSheet(DATA_SHEET_NAME);
+
+            if (!TryGetColumnIndex(SKILLID_COLNAME, sheet, out int skillIdColIndex))
+            {
+                errmsg = $"column <{SKILLID_COLNAME}> was not found in sheet";
+                return false;
+            }
+            if (!TryGetColumnIndex(BULETID_COLNAME, sheet, out int bulletIdColIndex))
+            {
+                errmsg = $"column <{BULETID_COLNAME}> was not found in sheet";
+                return false;
+            }
+            if (!TryGetColumnIndex(SHOTRID_COLNAME, sheet, out int shooterIdColIndex))
+            {
+                errmsg = $"column <{SHOTRID_COLNAME}> was not found in sheet";
+                return false;
+            }
+
+            var testAreaSkillId = sheet.GetRow(rowIndex).GetCell(skillIdColIndex).ToString();
+
+            foreach (var data in skillGroup.Skills)
+            {
+                if (sheet.GetRow(rowIndex).GetCell(skillIdColIndex).ToString() != testAreaSkillId )
+                {
+                    errmsg = "test case writing overflow, please check the lv count of testskill.";
+                    return false;
+                }
+                sheet.GetRow(rowIndex).CreateCell(bulletIdColIndex).SetCellValue(data.BulletId);
+                sheet.GetRow(rowIndex).CreateCell(shooterIdColIndex).SetCellValue(data.ShooterId);
+                rowIndex++;
+            }
+
+            errmsg = default;
+            return true;
         }
 
         private ExcelService()

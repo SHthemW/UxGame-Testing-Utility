@@ -45,6 +45,7 @@ namespace UxGame_Testing_Utility
 
             #endregion
 
+            // excel file name: dataTab
             #region Load Excel File
 
             var dataTab = new ExcelService(dataConf.DataSrcPath, out var errmsg_tabfile);
@@ -58,14 +59,14 @@ namespace UxGame_Testing_Utility
 
             #endregion
 
-            #region Get Skill Group
+            #region Get Test Target
 
             if (!dataTab.GetSkillGroup(_skillIdBox.Text, out var group, out var errmsg_skill))
             {
                 _logger.ShowLog(errmsg_skill!, LogLevel.err);
                 return;
             }
-            _logger.ShowLog($"finished get, found {group.Count} skills.", LogLevel.inf);
+            _logger.ShowLog($"finished get test data. found {group.Count} skills.", LogLevel.inf);
 
             if (userConf.ShowSKillDetailsAfterLoad)
             {
@@ -73,6 +74,17 @@ namespace UxGame_Testing_Utility
                     group.Skills,
                     skill => _logger.ShowLog(skill.ToString(), LogLevel.inf));
             }
+
+            #endregion
+
+            #region Flush Test Data On Runtime
+
+            if (!dataTab.ApplySkillGroupDataOn(group, 1, out var errmsg_write))
+            {
+                _logger.ShowLog(errmsg_write!, LogLevel.err);
+                return;
+            }
+            _logger.ShowLog($"finished flush data. found {group.Count} skills.", LogLevel.inf);
 
             #endregion
         }
