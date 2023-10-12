@@ -106,6 +106,30 @@ namespace UxGame_Testing_Utility
                     );
 
             #endregion
+
+            # region Deploy: Convert Excel To Json
+
+            _logger.ShowLog("calling E2J server in unity...", LogLevel.inf);
+
+            NetworkService.SendCommand(ClientCmd.CONV_EXCEL_TO_JSON, out var msgFromServer_E2J);
+            _logger.ShowLog($"{msgFromServer_E2J}. waiting for {dataConf.E2JWaitingTime} ms...", LogLevel.inf);
+
+            Thread.Sleep(dataConf.E2JWaitingTime);
+
+            #endregion
+
+            #region Deploy: Convert Json To Bin
+
+            _logger.ShowLog("calling J2B server in unity...", LogLevel.inf);
+
+            NetworkService.SendCommand(ClientCmd.CONV_JSON_TO_BIN, out var msgFromServer_J2B);
+            _logger.ShowLog($"{msgFromServer_J2B}. waiting for {dataConf.J2BWaitingTime} ms...", LogLevel.inf);
+
+            Thread.Sleep(dataConf.J2BWaitingTime);
+
+            # endregion
+
+            _logger.ShowLog("all actions is DONE.", LogLevel.inf);
         }
 
         private void CleanBtn_Click(object sender, EventArgs e)

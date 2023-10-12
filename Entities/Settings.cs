@@ -12,15 +12,26 @@ namespace UxGame_Testing_Utility.Entities
         public string DataSrcPath { get; init; }
         public string DplProgPath { get; init; }
 
+        /// <remarks>
+        /// time unit: ms
+        /// </remarks>
+        public int E2JWaitingTime { get; init; }
+        /// <remarks>
+        /// time unit: ms
+        /// </remarks>
+        public int J2BWaitingTime { get; init; }
+
         public DataConfig() 
         {
             DataSrcPath = string.Empty;
             DplProgPath = string.Empty;
         }
-        public DataConfig(string dataSrcPath, string dplProgPath)
+        public DataConfig(string dataSrcPath, string dplProgPath, int E2JWaitingTime, int J2BWaitingTime)
         {
             DataSrcPath = dataSrcPath ?? throw new ArgumentNullException(nameof(dataSrcPath));
             DplProgPath = dplProgPath ?? throw new ArgumentNullException(nameof(dplProgPath));
+            this.E2JWaitingTime = E2JWaitingTime;
+            this.J2BWaitingTime = J2BWaitingTime;
         }
         public static bool CheckVaild(DataConfig conf, out string?[] errmsgs)
         {

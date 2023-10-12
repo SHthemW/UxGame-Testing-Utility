@@ -39,6 +39,10 @@
             _enableShowSkillDetailsChkBox = new CheckBox();
             _autoCloseChkBox = new CheckBox();
             _autoOpenChkBox = new CheckBox();
+            _E2JWaitTimeBox = new TextBox();
+            TITLE_3 = new Label();
+            _J2BWaitTimeBox = new TextBox();
+            TITLE_4 = new Label();
             SuspendLayout();
             // 
             // TIP_DATASRC
@@ -86,7 +90,7 @@
             // _okBtn
             // 
             _okBtn.DialogResult = DialogResult.OK;
-            _okBtn.Location = new Point(89, 377);
+            _okBtn.Location = new Point(89, 389);
             _okBtn.Name = "_okBtn";
             _okBtn.Size = new Size(75, 23);
             _okBtn.TabIndex = 5;
@@ -107,7 +111,7 @@
             // 
             TITLE_2.AutoSize = true;
             TITLE_2.Font = new Font("Microsoft YaHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            TITLE_2.Location = new Point(23, 193);
+            TITLE_2.Location = new Point(23, 246);
             TITLE_2.Name = "TITLE_2";
             TITLE_2.Size = new Size(56, 17);
             TITLE_2.TabIndex = 8;
@@ -116,7 +120,7 @@
             // _enableShowSkillDetailsChkBox
             // 
             _enableShowSkillDetailsChkBox.AutoSize = true;
-            _enableShowSkillDetailsChkBox.Location = new Point(23, 223);
+            _enableShowSkillDetailsChkBox.Location = new Point(23, 276);
             _enableShowSkillDetailsChkBox.Name = "_enableShowSkillDetailsChkBox";
             _enableShowSkillDetailsChkBox.Size = new Size(171, 21);
             _enableShowSkillDetailsChkBox.TabIndex = 9;
@@ -126,7 +130,7 @@
             // _autoCloseChkBox
             // 
             _autoCloseChkBox.AutoSize = true;
-            _autoCloseChkBox.Location = new Point(23, 262);
+            _autoCloseChkBox.Location = new Point(23, 315);
             _autoCloseChkBox.Name = "_autoCloseChkBox";
             _autoCloseChkBox.Size = new Size(159, 21);
             _autoCloseChkBox.TabIndex = 10;
@@ -136,19 +140,55 @@
             // _autoOpenChkBox
             // 
             _autoOpenChkBox.AutoSize = true;
-            _autoOpenChkBox.Location = new Point(23, 289);
+            _autoOpenChkBox.Location = new Point(23, 342);
             _autoOpenChkBox.Name = "_autoOpenChkBox";
             _autoOpenChkBox.Size = new Size(159, 21);
             _autoOpenChkBox.TabIndex = 11;
             _autoOpenChkBox.Text = "完成修改后自动打开文件";
             _autoOpenChkBox.UseVisualStyleBackColor = true;
             // 
+            // _E2JWaitTimeBox
+            // 
+            _E2JWaitTimeBox.Location = new Point(23, 200);
+            _E2JWaitTimeBox.Name = "_E2JWaitTimeBox";
+            _E2JWaitTimeBox.Size = new Size(91, 23);
+            _E2JWaitTimeBox.TabIndex = 13;
+            // 
+            // TITLE_3
+            // 
+            TITLE_3.AutoSize = true;
+            TITLE_3.Location = new Point(23, 180);
+            TITLE_3.Name = "TITLE_3";
+            TITLE_3.Size = new Size(95, 17);
+            TITLE_3.TabIndex = 12;
+            TITLE_3.Text = "E2J等待时间ms:";
+            // 
+            // _J2BWaitTimeBox
+            // 
+            _J2BWaitTimeBox.Location = new Point(138, 200);
+            _J2BWaitTimeBox.Name = "_J2BWaitTimeBox";
+            _J2BWaitTimeBox.Size = new Size(92, 23);
+            _J2BWaitTimeBox.TabIndex = 14;
+            // 
+            // TITLE_4
+            // 
+            TITLE_4.AutoSize = true;
+            TITLE_4.Location = new Point(138, 180);
+            TITLE_4.Name = "TITLE_4";
+            TITLE_4.Size = new Size(96, 17);
+            TITLE_4.TabIndex = 15;
+            TITLE_4.Text = "J2B等待时间ms:";
+            // 
             // ConfigWindow
             // 
             AcceptButton = _okBtn;
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(255, 427);
+            ClientSize = new Size(255, 441);
+            Controls.Add(TITLE_4);
+            Controls.Add(_J2BWaitTimeBox);
+            Controls.Add(_E2JWaitTimeBox);
+            Controls.Add(TITLE_3);
             Controls.Add(_autoOpenChkBox);
             Controls.Add(_autoCloseChkBox);
             Controls.Add(_enableShowSkillDetailsChkBox);
@@ -181,5 +221,9 @@
         private CheckBox _enableShowSkillDetailsChkBox;
         private CheckBox _autoCloseChkBox;
         private CheckBox _autoOpenChkBox;
+        private TextBox _E2JWaitTimeBox;
+        private Label TITLE_3;
+        private TextBox _J2BWaitTimeBox;
+        private Label TITLE_4;
     }
 }

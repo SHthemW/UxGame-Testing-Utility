@@ -19,21 +19,25 @@ namespace UxGame_Testing_Utility
         public DataConfig DataConfig
         {
             get => new(
-                 _dataSrcPathBox.Text
-                ,_deployProgPathBox.Text
+                  dataSrcPath: _dataSrcPathBox.Text
+                , dplProgPath: _deployProgPathBox.Text
+                , E2JWaitingTime: int.Parse(_E2JWaitTimeBox.Text)
+                , J2BWaitingTime: int.Parse(_J2BWaitTimeBox.Text)
                 );
             private set
             {
                 _dataSrcPathBox.Text = value.DataSrcPath;
                 _deployProgPathBox.Text = value.DplProgPath;
+                _E2JWaitTimeBox.Text = value.E2JWaitingTime.ToString();
+                _J2BWaitTimeBox.Text = value.J2BWaitingTime.ToString();
             }
         }
         public UserConfig UserConfig
         {
             get => new(
-                 _enableShowSkillDetailsChkBox.Checked
-                ,_autoCloseChkBox.Checked
-                ,_autoOpenChkBox.Checked
+                  _enableShowSkillDetailsChkBox.Checked
+                , _autoCloseChkBox.Checked
+                , _autoOpenChkBox.Checked
                 );
             private set
             {
