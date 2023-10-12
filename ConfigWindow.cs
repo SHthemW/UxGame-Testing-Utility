@@ -1,13 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using UxGame_Testing_Utility.Entities;
 using UxGame_Testing_Utility.Services;
 
@@ -26,7 +18,10 @@ namespace UxGame_Testing_Utility
 
         public DataConfig DataConfig
         {
-            get => new(_dataSrcPathBox.Text, _deployProgPathBox.Text);
+            get => new(
+                 _dataSrcPathBox.Text
+                ,_deployProgPathBox.Text
+                );
             private set
             {
                 _dataSrcPathBox.Text = value.DataSrcPath;
@@ -35,10 +30,16 @@ namespace UxGame_Testing_Utility
         }
         public UserConfig UserConfig
         {
-            get => new(_enableShowSkillDetailsChkBox.Checked);
+            get => new(
+                 _enableShowSkillDetailsChkBox.Checked
+                ,_autoCloseChkBox.Checked
+                ,_autoOpenChkBox.Checked
+                );
             private set
             {
                 _enableShowSkillDetailsChkBox.Checked = value.ShowSKillDetailsAfterLoad;
+                _autoCloseChkBox.Checked = value.AutoCloseFileIfOccupying;
+                _autoOpenChkBox.Checked = value.AutoOpenFileAfterProcess;
             }
         }
     }

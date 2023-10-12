@@ -37,6 +37,8 @@
             TITLE_1 = new Label();
             TITLE_2 = new Label();
             _enableShowSkillDetailsChkBox = new CheckBox();
+            _autoCloseChkBox = new CheckBox();
+            _autoOpenChkBox = new CheckBox();
             SuspendLayout();
             // 
             // TIP_DATASRC
@@ -84,7 +86,7 @@
             // _okBtn
             // 
             _okBtn.DialogResult = DialogResult.OK;
-            _okBtn.Location = new Point(89, 276);
+            _okBtn.Location = new Point(89, 377);
             _okBtn.Name = "_okBtn";
             _okBtn.Size = new Size(75, 23);
             _okBtn.TabIndex = 5;
@@ -121,12 +123,34 @@
             _enableShowSkillDetailsChkBox.Text = "加载技能后打印其详细信息";
             _enableShowSkillDetailsChkBox.UseVisualStyleBackColor = true;
             // 
+            // _autoCloseChkBox
+            // 
+            _autoCloseChkBox.AutoSize = true;
+            _autoCloseChkBox.Location = new Point(23, 262);
+            _autoCloseChkBox.Name = "_autoCloseChkBox";
+            _autoCloseChkBox.Size = new Size(159, 21);
+            _autoCloseChkBox.TabIndex = 10;
+            _autoCloseChkBox.Text = "进程占用时自动关闭文件";
+            _autoCloseChkBox.UseVisualStyleBackColor = true;
+            // 
+            // _autoOpenChkBox
+            // 
+            _autoOpenChkBox.AutoSize = true;
+            _autoOpenChkBox.Location = new Point(23, 289);
+            _autoOpenChkBox.Name = "_autoOpenChkBox";
+            _autoOpenChkBox.Size = new Size(159, 21);
+            _autoOpenChkBox.TabIndex = 11;
+            _autoOpenChkBox.Text = "完成修改后自动打开文件";
+            _autoOpenChkBox.UseVisualStyleBackColor = true;
+            // 
             // ConfigWindow
             // 
             AcceptButton = _okBtn;
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(255, 328);
+            ClientSize = new Size(255, 427);
+            Controls.Add(_autoOpenChkBox);
+            Controls.Add(_autoCloseChkBox);
             Controls.Add(_enableShowSkillDetailsChkBox);
             Controls.Add(TITLE_2);
             Controls.Add(TITLE_1);
@@ -155,5 +179,7 @@
         private Label TITLE_1;
         private Label TITLE_2;
         private CheckBox _enableShowSkillDetailsChkBox;
+        private CheckBox _autoCloseChkBox;
+        private CheckBox _autoOpenChkBox;
     }
 }

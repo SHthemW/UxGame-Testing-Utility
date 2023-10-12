@@ -44,8 +44,13 @@ namespace UxGame_Testing_Utility
             _logger.ShowLog("finished loading config.", LogLevel.inf);
 
             #endregion
-            
-            ProcessService.KillWindow($"{Path.GetFileName(dataConf.DataSrcPath)} - LibreOffice Calc");
+
+            # region Close File Before Process
+
+            if (userConf.AutoCloseFileIfOccupying)
+                ProcessService.KillWindow($"{Path.GetFileName(dataConf.DataSrcPath)} - LibreOffice Calc");
+
+            # endregion
 
             // excel file name: dataTab
             #region Load Excel File
@@ -54,6 +59,8 @@ namespace UxGame_Testing_Utility
             if (errmsg_tabfile != null)
             {
                 _logger.ShowLog(errmsg_tabfile, LogLevel.err);
+                if (!userConf.AutoCloseFileIfOccupying)
+                    _logger.ShowLog("if you want to close file automatically, go to […Ë÷√].", LogLevel.inf);
                 return;
             }
 
@@ -90,10 +97,15 @@ namespace UxGame_Testing_Utility
 
             #endregion
 
-            ProcessService.Startup(
-                @"C:\\Program Files\\LibreOffice\\program\\scalc.exe", 
-                dataConf.DataSrcPath
-                );
+            #region Open File After Process
+
+            if (userConf.AutoOpenFileAfterProcess)
+                ProcessService.Startup(
+                    @"C:\\Program Files\\LibreOffice\\program\\scalc.exe", 
+                    dataConf.DataSrcPath
+                    );
+
+            #endregion
         }
 
         private void CleanBtn_Click(object sender, EventArgs e)

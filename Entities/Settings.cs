@@ -65,11 +65,15 @@ namespace UxGame_Testing_Utility.Entities
     public sealed class UserConfig
     {
         public bool ShowSKillDetailsAfterLoad { get; private init; }
+        public bool AutoCloseFileIfOccupying { get; private init; }
+        public bool AutoOpenFileAfterProcess { get; private init; }
 
         public UserConfig() { }
-        public UserConfig(bool showSKillDetailsAfterLoad)
+        public UserConfig(bool showSKillDetailsAfterLoad, bool autoCloseFileIfOccupying, bool autoOpenFileAfterProcess = false)
         {
             ShowSKillDetailsAfterLoad = showSKillDetailsAfterLoad;
+            AutoCloseFileIfOccupying = autoCloseFileIfOccupying;
+            AutoOpenFileAfterProcess = autoOpenFileAfterProcess;
         }
 
         public override string ToString()
