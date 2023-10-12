@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text;
+using System.Xml.Linq;
 using UxGame_Testing_Utility.Entities;
 using UxGame_Testing_Utility.Services;
 
@@ -103,7 +104,7 @@ namespace UxGame_Testing_Utility
 
             var applyToFileOpr = await dataTab.ApplySkillGroupDataOn(group, 1);
 
-            if (!applyToFileOpr.suc) 
+            if (!applyToFileOpr.suc)
             {
                 _logger.ShowLog(applyToFileOpr.msg!, LogLevel.err);
                 return;
@@ -124,7 +125,7 @@ namespace UxGame_Testing_Utility
 
             _logger.ShowLog("calling E2J server in unity...", LogLevel.inf);
 
-            var e2jOprMsg = await server.SendCommand(ClientCmd.CONV_EXCEL_TO_JSON);     
+            var e2jOprMsg = await server.SendCommand(ClientCmd.CONV_EXCEL_TO_JSON);
             _logger.ShowLog($"{e2jOprMsg}. waiting for {dataConf.E2JWaitingTime} ms...", LogLevel.inf);
 
             await Task.Delay(dataConf.E2JWaitingTime);
@@ -184,6 +185,12 @@ namespace UxGame_Testing_Utility
                 LocalService.SaveConfigDataToLocal(userConf);
                 _logger.ShowLog($"config data is saved.", LogLevel.inf);
             }
+        }
+
+        private void LogBox_TextChanged(object sender, EventArgs e)
+        {
+            _logBox.SelectionStart = _logBox.Text.Length;
+            _logBox.ScrollToCaret();
         }
     }
 }

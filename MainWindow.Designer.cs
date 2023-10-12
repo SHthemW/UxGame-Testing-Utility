@@ -91,6 +91,7 @@
             _logBox.Size = new Size(247, 94);
             _logBox.TabIndex = 3;
             _logBox.Text = "Welcome.";
+            _logBox.TextChanged += LogBox_TextChanged;
             // 
             // TITLE
             // 
