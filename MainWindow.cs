@@ -114,6 +114,16 @@ namespace UxGame_Testing_Utility
 
             #endregion           
 
+            #region Open File After Process
+
+            if (userConf.AutoOpenFileAfterProcess)
+                ProcessService.Startup(
+                    @"C:\\Program Files\\LibreOffice\\program\\scalc.exe",
+                    dataConf.DataSrcPath
+                    );
+
+            #endregion
+
             #region Deploy: Connect To Unity
 
             var server = new NetworkService();
@@ -144,15 +154,17 @@ namespace UxGame_Testing_Utility
 
             await Task.Delay(dataConf.J2BWaitingTime);
 
-            # endregion
+            #endregion
 
-            #region Open File After Process
+            #region Deploy: Refresh Unity Editor
 
-            if (userConf.AutoOpenFileAfterProcess)
-                ProcessService.Startup(
-                    @"C:\\Program Files\\LibreOffice\\program\\scalc.exe",
-                    dataConf.DataSrcPath
-                    );
+            server = new NetworkService();
+            await server.ConnectToServer();
+
+            _logger.ShowLog("refreshing scripts in unity...", LogLevel.inf);
+
+            var refreshOprMsg = await server.SendCommand(ClientCmd.REFRESH_SCRIPTS);
+            _logger.ShowLog($"{refreshOprMsg}.", LogLevel.inf);
 
             #endregion
 

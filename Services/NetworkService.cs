@@ -31,30 +31,7 @@ namespace UxGame_Testing_Utility.Services
             byte[] dataToSend = Encoding.UTF8.GetBytes(command);
             byte[] receivedData = await SendAndReceiveAsync(_socket, dataToSend);
 
-            return Encoding.UTF8.GetString(receivedData, 0, receivedData.Length);
-
-            //return await Task.Run(() => 
-            //{
-            //    // 发送数据
-            //    byte[] buffer = Encoding.UTF8.GetBytes(command);
-            //    var sendArgs = new SocketAsyncEventArgs();
-            //    sendArgs.SetBuffer(buffer, 0, buffer.Length);
-            //    sendArgs.Completed += (s, e) =>
-            //    {
-            //        // 处理发送操作完成后的逻辑
-            //    };
-
-            //    bool isPending = _socket.SendAsync(sendArgs);
-
-            //    // 接收数据
-            //    buffer = new byte[1024];
-            //    var rcevArgs = new SocketAsyncEventArgs();
-            //    rcevArgs.SetBuffer(buffer, 0, buffer.Length);
-            //    _socket.ReceiveAsync(rcevArgs);
-
-            //    string receivedMsg = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
-            //    return receivedMsg;
-            //});             
+            return Encoding.UTF8.GetString(receivedData, 0, receivedData.Length);                    
         }
 
         private static Task<byte[]> SendAndReceiveAsync(Socket socket, byte[] dataToSend)
@@ -133,6 +110,7 @@ namespace UxGame_Testing_Utility.Services
     {
         internal const string CONV_EXCEL_TO_JSON = "ConvertExcelToJson";
         internal const string CONV_JSON_TO_BIN = "ConvertJsonToBin";
+        internal const string REFRESH_SCRIPTS = "RefreshScripts";
     }
 
 }
