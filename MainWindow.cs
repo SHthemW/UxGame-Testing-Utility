@@ -16,7 +16,7 @@ namespace UxGame_Testing_Utility
             _logger = new(_logBox);
         }
 
-        private void StartBtn_Click(object sender, EventArgs e)
+        private async void StartBtn_Click(object sender, EventArgs e)
         {
             #region Load Config
 
@@ -25,16 +25,23 @@ namespace UxGame_Testing_Utility
                 _logger.ShowLog("skill id is empty.", LogLevel.err);
                 return;
             }
-            if (!LocalService.TryLoadConfigDataFromLocal(out DataConfig dataConf, out var errmsg_local_data))
+
+            var dataConfOpr = await LocalService.TryLoadConfigDataFromLocal<DataConfig>();
+            if (!dataConfOpr.suc)
             {
-                _logger.ShowLog(errmsg_local_data!, LogLevel.err);
+                _logger.ShowLog(dataConfOpr.msg, LogLevel.err);
                 return;
             }
-            if (!LocalService.TryLoadConfigDataFromLocal(out UserConfig userConf, out var errmsg_local_user))
+            DataConfig dataConf = dataConfOpr.rst;
+
+            var userConfOpr = await LocalService.TryLoadConfigDataFromLocal<UserConfig>();
+            if (!userConfOpr.suc)
             {
-                _logger.ShowLog(errmsg_local_user!, LogLevel.err);
+                _logger.ShowLog(dataConfOpr.msg, LogLevel.err);
                 return;
             }
+            UserConfig userConf = userConfOpr.rst;
+
             if (!DataConfig.CheckVaild(dataConf, out var errmsg_conf))
             {
                 _logger.ShowLog(errmsg_conf!, LogLevel.err);
@@ -55,10 +62,12 @@ namespace UxGame_Testing_Utility
             // excel file name: dataTab
             #region Load Excel File
 
-            var dataTab = new ExcelService(dataConf.DataSrcPath, out var errmsg_tabfile);
-            if (errmsg_tabfile != null)
+            var dataTab = new ExcelService(dataConf.DataSrcPath);
+            var tabInitOpr = await dataTab.InitExcelFile();
+
+            if (!tabInitOpr.suc)
             {
-                _logger.ShowLog(errmsg_tabfile, LogLevel.err);
+                _logger.ShowLog(tabInitOpr.msg, LogLevel.err);
                 if (!userConf.AutoCloseFileIfOccupying)
                     _logger.ShowLog("if you want to close file automatically, go to […Ë÷√].", LogLevel.inf);
                 return;
@@ -70,11 +79,15 @@ namespace UxGame_Testing_Utility
 
             #region Get Test Target
 
-            if (!dataTab.GetSkillGroup(_skillIdBox.Text, out var group, out var errmsg_skill))
+            var skillGroupGetOpr = await dataTab.GetSkillGroup(_skillIdBox.Text);
+
+            if (!skillGroupGetOpr.suc)
             {
-                _logger.ShowLog(errmsg_skill!, LogLevel.err);
+                _logger.ShowLog(skillGroupGetOpr.msg!, LogLevel.err);
                 return;
             }
+            SkillGroup group = skillGroupGetOpr.rst;
+
             _logger.ShowLog($"finished get test data. found {group.Count} skills.", LogLevel.inf);
 
             if (userConf.ShowSKillDetailsAfterLoad)
@@ -88,46 +101,59 @@ namespace UxGame_Testing_Utility
 
             #region Flush Test Data On Runtime
 
-            if (!dataTab.ApplySkillGroupDataOn(group, 1, out var errmsg_write))
+            var applyToFileOpr = await dataTab.ApplySkillGroupDataOn(group, 1);
+
+            if (!applyToFileOpr.suc) 
             {
-                _logger.ShowLog(errmsg_write!, LogLevel.err);
+                _logger.ShowLog(applyToFileOpr.msg!, LogLevel.err);
                 return;
             }
+
             _logger.ShowLog($"finished flush data.", LogLevel.inf);
 
-            #endregion
+            #endregion           
 
-            #region Open File After Process
+            #region Deploy: Connect To Unity
 
-            if (userConf.AutoOpenFileAfterProcess)
-                ProcessService.Startup(
-                    @"C:\\Program Files\\LibreOffice\\program\\scalc.exe", 
-                    dataConf.DataSrcPath
-                    );
+            var server = new NetworkService();
+            await server.ConnectToServer();
 
             #endregion
 
-            # region Deploy: Convert Excel To Json
+            #region Deploy: Convert Excel To Json
 
             _logger.ShowLog("calling E2J server in unity...", LogLevel.inf);
 
-            NetworkService.SendCommand(ClientCmd.CONV_EXCEL_TO_JSON, out var msgFromServer_E2J);
-            _logger.ShowLog($"{msgFromServer_E2J}. waiting for {dataConf.E2JWaitingTime} ms...", LogLevel.inf);
+            var e2jOprMsg = await server.SendCommand(ClientCmd.CONV_EXCEL_TO_JSON);     
+            _logger.ShowLog($"{e2jOprMsg}. waiting for {dataConf.E2JWaitingTime} ms...", LogLevel.inf);
 
-            Thread.Sleep(dataConf.E2JWaitingTime);
+            await Task.Delay(dataConf.E2JWaitingTime);
 
             #endregion
 
             #region Deploy: Convert Json To Bin
 
+            server = new NetworkService();
+            await server.ConnectToServer();
+
             _logger.ShowLog("calling J2B server in unity...", LogLevel.inf);
 
-            NetworkService.SendCommand(ClientCmd.CONV_JSON_TO_BIN, out var msgFromServer_J2B);
-            _logger.ShowLog($"{msgFromServer_J2B}. waiting for {dataConf.J2BWaitingTime} ms...", LogLevel.inf);
+            var j2bOprMsg = await server.SendCommand(ClientCmd.CONV_JSON_TO_BIN);
+            _logger.ShowLog($"{j2bOprMsg}. waiting for {dataConf.J2BWaitingTime} ms...", LogLevel.inf);
 
-            Thread.Sleep(dataConf.J2BWaitingTime);
+            await Task.Delay(dataConf.J2BWaitingTime);
 
             # endregion
+
+            #region Open File After Process
+
+            if (userConf.AutoOpenFileAfterProcess)
+                ProcessService.Startup(
+                    @"C:\\Program Files\\LibreOffice\\program\\scalc.exe",
+                    dataConf.DataSrcPath
+                    );
+
+            #endregion
 
             _logger.ShowLog("all actions is DONE.", LogLevel.inf);
         }
@@ -139,6 +165,7 @@ namespace UxGame_Testing_Utility
         private void ConfigBtn_Click(object sender, EventArgs e)
         {
             using ConfigWindow confWindow = new();
+            _ = confWindow.InitShowData();
 
             var result = confWindow.ShowDialog();
 

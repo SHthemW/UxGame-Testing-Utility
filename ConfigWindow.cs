@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NPOI.SS.Formula.Functions;
+using NPOI.Util;
+using System;
 using System.Collections.Generic;
 using UxGame_Testing_Utility.Entities;
 using UxGame_Testing_Utility.Services;
@@ -10,10 +12,6 @@ namespace UxGame_Testing_Utility
         public ConfigWindow()
         {
             InitializeComponent();
-            if (LocalService.TryLoadConfigDataFromLocal(out DataConfig dataConf, out _))
-                this.DataConfig = dataConf;
-            if (LocalService.TryLoadConfigDataFromLocal(out UserConfig userConf, out _))
-                this.UserConfig = userConf;
         }
 
         public DataConfig DataConfig
@@ -45,6 +43,17 @@ namespace UxGame_Testing_Utility
                 _autoCloseChkBox.Checked = value.AutoCloseFileIfOccupying;
                 _autoOpenChkBox.Checked = value.AutoOpenFileAfterProcess;
             }
+        }     
+
+        public async Task InitShowData()
+        {
+            var dataConfRst = await LocalService.TryLoadConfigDataFromLocal<DataConfig>();
+            if (dataConfRst.suc)
+                this.DataConfig = dataConfRst.rst;
+
+            var userConfRst = await LocalService.TryLoadConfigDataFromLocal<UserConfig>();
+            if (userConfRst.suc)
+                this.UserConfig = userConfRst.rst;
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using NPOI.SS.UserModel;
+﻿using NPOI.SS.Formula.Functions;
+using NPOI.SS.Formula.PTG;
+using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using UxGame_Testing_Utility.Entities;
 
@@ -6,13 +8,13 @@ namespace UxGame_Testing_Utility.Services
 {
     internal sealed class ExcelService
     {
-        private readonly string? _filePath;
-        private readonly IWorkbook? _workbook;     
+        private readonly string _filePath;
 
-        private readonly int _skillIdColumnIndex;
-        private readonly int _skillNmColumnIndex;
-        private readonly int _buletIdColumnIndex;
-        private readonly int _shotrIdColumnIndex;
+        private IWorkbook? _workbook;     
+        private int _skillIdColumnIndex;
+        private int _skillNmColumnIndex;
+        private int _buletIdColumnIndex;
+        private int _shotrIdColumnIndex;
 
         private const int    IO_TRY_SPACE_MS = 50;
         private const int    MAX_IO_TRYTIMES = 10;     
@@ -25,143 +27,142 @@ namespace UxGame_Testing_Utility.Services
         private ISheet DataSheet => 
             _workbook!.GetSheet(DATA_SHEET_NAME);
 
-        internal ExcelService(string excelFilePath, out string? errmsg)
+        internal ExcelService(string excelFilePath)
         {
-            errmsg = default;
-
-            #region Init Excel File
-
-            _filePath = excelFilePath ?? throw new ArgumentNullException(nameof(excelFilePath));
-
-            for (int times = 0; _workbook == null && times < MAX_IO_TRYTIMES; times ++)
+            _filePath = excelFilePath ?? throw new ArgumentNullException(nameof(excelFilePath));           
+        }
+        internal async Task<(bool suc, string msg)> InitExcelFile()
+        {
+            return await Task.Run(() =>
             {
+                #region Init Excel File
+
+                for (int times = 0; _workbook == null && times < MAX_IO_TRYTIMES; times++)
+                {
+                    try
+                    {
+                        using FileStream file = new(_filePath, FileMode.Open, FileAccess.ReadWrite);
+                        _workbook = new XSSFWorkbook(file);
+                    }
+                    catch (IOException)
+                    {
+                        Thread.Sleep(IO_TRY_SPACE_MS);
+                    }
+                }
+                if (_workbook == null)
+                    return (false, "file is in occupying, please close and retry.");
+
+                #endregion
+
+                #region Init Basic Properties
                 try
                 {
-                    using FileStream file = new(_filePath, FileMode.Open, FileAccess.ReadWrite);
-                    _workbook = new XSSFWorkbook(file);
+                    _skillIdColumnIndex = TryGetColumnIndex(SKILLID_COLNAME);
+                    _skillNmColumnIndex = TryGetColumnIndex(SKILLNM_COLNAME);
+                    _buletIdColumnIndex = TryGetColumnIndex(BULETID_COLNAME);
+                    _shotrIdColumnIndex = TryGetColumnIndex(SHOTRID_COLNAME);
                 }
-                catch (IOException)
+                catch (NullReferenceException)
                 {
-                    Thread.Sleep(IO_TRY_SPACE_MS);
+                    return (false, "excel sheet is failed to init.");
                 }
-            }
-            if (_workbook == null)
-            {
-                errmsg = "file is in occupying, please close and retry.";
-                return;
-            }
+                catch (KeyNotFoundException e)
+                {
+                    return (false, $"name {e.Message} cannot be found in file.");
+                }
+                #endregion
 
-            #endregion
-
-            #region Init Basic Properties
-            try
-            {
-                _skillIdColumnIndex = TryGetColumnIndex(SKILLID_COLNAME);
-                _skillNmColumnIndex = TryGetColumnIndex(SKILLNM_COLNAME);
-                _buletIdColumnIndex = TryGetColumnIndex(BULETID_COLNAME);
-                _shotrIdColumnIndex = TryGetColumnIndex(SHOTRID_COLNAME);
-            }
-            catch (NullReferenceException)
-            {
-                errmsg = "excel sheet is failed to init.";
-                return;
-            }
-            catch (KeyNotFoundException e)
-            {
-                errmsg = $"name {e.Message} cannot be found in file.";
-                return;
-            }
-            #endregion 
+                return (true, string.Empty);
+            });        
         }
-        internal bool GetSkillGroup(string idOrName, out SkillGroup group, out string? errmsg)
+        internal async Task<(bool suc, SkillGroup rst, string msg)> GetSkillGroup(string idOrName)
         {
-            List<Skill> skillsInGroup = new();
-            string currentName = string.Empty;
-
-            for (int i = 1; i <= DataSheet!.LastRowNum; i++)
+            return await Task.Run(() =>
             {
-                IRow row = DataSheet.GetRow(i);
+                List<Skill> skillsInGroup = new();
+                string currentName = string.Empty;
 
-                // get id in current row
-                var currentId = row.GetCell(_skillIdColumnIndex)?.ToString();
-                if (string.IsNullOrEmpty(currentId))
-                    continue;
-
-                // get name in current row
-                var nameInRow = row.GetCell(_skillNmColumnIndex)?.ToString();
-                if (!string.IsNullOrEmpty(nameInRow))
-                    currentName = nameInRow;
-
-                if (Skill.IsSameGroup(currentId, idOrName) || currentName == idOrName)
+                for (int i = 1; i <= DataSheet!.LastRowNum; i++)
                 {
-                    skillsInGroup.Add(new Skill(
-                        Id: currentId,
-                        BulletId: row.GetCell(_buletIdColumnIndex).ToString()!,
-                        ShooterId: row.GetCell(_shotrIdColumnIndex).ToString()!
-                        ));
-                }
-            }
+                    IRow row = DataSheet.GetRow(i);
 
-            if (skillsInGroup.Count > 0)
-            {
-                group = new(skillsInGroup.ToArray());
-                errmsg = null;
-                return true;
-            }
-            else
-            {
-                group = default;
-                errmsg = $"skill [{idOrName}] was not found.";
-                return false;
-            }
+                    // get id in current row
+                    var currentId = row.GetCell(_skillIdColumnIndex)?.ToString();
+                    if (string.IsNullOrEmpty(currentId))
+                        continue;
+
+                    // get name in current row
+                    var nameInRow = row.GetCell(_skillNmColumnIndex)?.ToString();
+                    if (!string.IsNullOrEmpty(nameInRow))
+                        currentName = nameInRow;
+
+                    if (Skill.IsSameGroup(currentId, idOrName) || currentName == idOrName)
+                    {
+                        skillsInGroup.Add(new Skill(
+                            Id: currentId,
+                            BulletId: row.GetCell(_buletIdColumnIndex).ToString()!,
+                            ShooterId: row.GetCell(_shotrIdColumnIndex).ToString()!
+                            ));
+                    }
+                }
+
+                if (skillsInGroup.Count > 0)
+                    return (true, new(skillsInGroup.ToArray()), null!);
+                else
+                    return (false, default(SkillGroup), $"skill [{idOrName}] was not found.");
+            });        
         }
-        internal bool ApplySkillGroupDataOn(SkillGroup skillGroup, int rowIndex, out string? errmsg)
+        internal async Task<(bool suc, string msg)> ApplySkillGroupDataOn(SkillGroup skillGroup, int rowIndex)
         {
-            var testAreaSkillId = DataSheet!.GetRow(rowIndex).GetCell(_skillIdColumnIndex).ToString();
-
-            foreach (var data in skillGroup.Skills)
+            return await Task.Run(() => 
             {
-                var currentAreaId = DataSheet.GetRow(rowIndex).GetCell(_skillIdColumnIndex).ToString();
-                if (!Skill.IsSameGroup(currentAreaId!, testAreaSkillId!))
+                var testAreaSkillId = DataSheet!.GetRow(rowIndex).GetCell(_skillIdColumnIndex).ToString();
+
+                foreach (var data in skillGroup.Skills)
                 {
-                    errmsg = 
-                        $"test case writing overflow: " +
-                        $"test area only in id {testAreaSkillId}, " +
-                        $"but now is flushing in {currentAreaId}. " +
-                        $"please check the lv count of testskill.";
-                    return false;
+                    var currentAreaId = DataSheet.GetRow(rowIndex).GetCell(_skillIdColumnIndex).ToString();
+                    if (!Skill.IsSameGroup(currentAreaId!, testAreaSkillId!))
+                    {
+                        var errmsg =
+                            $"test case writing overflow: " +
+                            $"test area only in id {testAreaSkillId}, " +
+                            $"but now is flushing in {currentAreaId}. " +
+                            $"please check the lv count of testskill.";
+                        return (false, errmsg);
+                    }
+
+                    var bulletIdOrigStyle = DataSheet.GetRow(rowIndex).GetCell(_buletIdColumnIndex).CellStyle;
+                    var shoterIdOrigStyle = DataSheet.GetRow(rowIndex).GetCell(_shotrIdColumnIndex).CellStyle;
+
+                    var bulletIdCell = DataSheet.GetRow(rowIndex).CreateCell(_buletIdColumnIndex);
+                    var shoterIdCell = DataSheet.GetRow(rowIndex).CreateCell(_shotrIdColumnIndex);
+
+                    bulletIdCell.SetCellValue(data.BulletId);
+                    shoterIdCell.SetCellValue(data.ShooterId);
+                    bulletIdCell.CellStyle = bulletIdOrigStyle;
+                    shoterIdCell.CellStyle = shoterIdOrigStyle;
+
+                    rowIndex++;
                 }
 
-                var bulletIdOrigStyle = DataSheet.GetRow(rowIndex).GetCell(_buletIdColumnIndex).CellStyle;
-                var shoterIdOrigStyle = DataSheet.GetRow(rowIndex).GetCell(_shotrIdColumnIndex).CellStyle;
+                try
+                {
+                    using FileStream file = new(_filePath!, FileMode.Create, FileAccess.Write);
+                    _workbook?.Write(file);
+                }
+                catch (IOException e)
+                {
+                    return (false, e.Message);
+                }
 
-                var bulletIdCell = DataSheet.GetRow(rowIndex).CreateCell(_buletIdColumnIndex);
-                var shoterIdCell = DataSheet.GetRow(rowIndex).CreateCell(_shotrIdColumnIndex);
-
-                bulletIdCell.SetCellValue(data.BulletId);
-                shoterIdCell.SetCellValue(data.ShooterId);
-                bulletIdCell.CellStyle = bulletIdOrigStyle;
-                shoterIdCell.CellStyle = shoterIdOrigStyle;
-
-                rowIndex++;
-            }
-
-            try
-            {
-                using FileStream file = new(_filePath!, FileMode.Create, FileAccess.Write);
-                _workbook?.Write(file);
-            }
-            catch (IOException e)
-            {
-                errmsg = e.Message;
-                return false;
-            }
-
-            errmsg = default;
-            return true;
+                return (true, string.Empty);
+            });
         }
 
-        private ExcelService() { }
+        private ExcelService() 
+        {
+            _filePath = string.Empty;
+        }
         private int TryGetColumnIndex(string columnName)
         {
             if (DataSheet == null)

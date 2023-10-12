@@ -1,15 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NPOI.SS.Formula.Functions;
-using Org.BouncyCastle.Asn1.X509.Qualified;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using UxGame_Testing_Utility.Entities;
 
 namespace UxGame_Testing_Utility.Services
 {
@@ -36,62 +27,63 @@ namespace UxGame_Testing_Utility.Services
             WriteTo(typeof(T).ToString(), jsonStr, Encoding.UTF8);
         }
 
-        public static bool TryLoadConfigDataFromLocal<T>(out T config, out string? errmsg) where T : class, new()
-        {
-            config = new();
+        public static async Task<(bool suc, T rst, string msg)> TryLoadConfigDataFromLocal<T>() where T : class, new()
+        {           
+            return await Task.Run(() =>
+            {
+                T config = new();
 
-            string jsonStr;
-            try
-            {
-                jsonStr = ReadFrom(typeof(T).ToString(), Encoding.UTF8);
-            }
-            catch (ArgumentException) 
-            {
-                errmsg = "failed to read json from local.";
-                return false;
-            }
-            catch (FileNotFoundException) 
-            {
-                errmsg = "json file is not exists.";
-                return true;
-            }
-
-            JObject jsonObj;
-            try
-            {          
-                jsonObj = JObject.Parse(jsonStr);
-            }
-            catch (JsonReaderException)
-            {
-                errmsg = "failed to parse json str.";
-                return false;
-            }
-            
-            foreach (var prop in typeof(T).GetProperties())
-            {             
-                var type = prop.PropertyType;
-                var value = jsonObj[prop.Name];   
-
-                dynamic? result = type switch
+                string jsonStr;
+                try
                 {
-                    Type t when t == typeof(string) => Convert.ToString(value),
-                    Type t when t == typeof(float) => Convert.ToSingle(value),
-                    Type t when t == typeof(bool) => Convert.ToBoolean(value),
-                    Type t when t == typeof(int) => Convert.ToInt32(value),
-                    _ => null
-                };
-
-                if (result is null)
+                    jsonStr = ReadFrom(typeof(T).ToString(), Encoding.UTF8);
+                }
+                catch (ArgumentException)
                 {
-                    errmsg = $"type <{type}> cannot be convert.";
-                    return false;
+                    var errmsg = "failed to read json from local.";
+                    return (false, null!, errmsg);
+                }
+                catch (FileNotFoundException)
+                {
+                    var errmsg = "json file is not exists.";
+                    return (false, null!, errmsg);
                 }
 
-                prop.SetValue(config, result);
-            }
+                JObject jsonObj;
+                try
+                {
+                    jsonObj = JObject.Parse(jsonStr);
+                }
+                catch (JsonReaderException)
+                {
+                    var errmsg = "failed to parse json str.";
+                    return (false, null!, errmsg);
+                }
 
-            errmsg = default;
-            return true;
+                foreach (var prop in typeof(T).GetProperties())
+                {
+                    var type = prop.PropertyType;
+                    var value = jsonObj[prop.Name];
+
+                    dynamic? result = type switch
+                    {
+                        Type t when t == typeof(string) => Convert.ToString(value),
+                        Type t when t == typeof(float) => Convert.ToSingle(value),
+                        Type t when t == typeof(bool) => Convert.ToBoolean(value),
+                        Type t when t == typeof(int) => Convert.ToInt32(value),
+                        _ => null
+                    };
+
+                    if (result is null)
+                    {
+                        var errmsg = $"type <{type}> cannot be convert.";
+                        return (false, config, errmsg);
+                    }
+
+                    prop.SetValue(config, result);
+                }
+                return (true, config, string.Empty);
+            });     
         }
     }
 }
