@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             CENTER_PANEL = new Panel();
+            TIP_2 = new Label();
+            _infoBox = new TextBox();
             _refreshBtn = new Button();
             TIP = new Label();
             _skillIdBox = new TextBox();
@@ -44,6 +46,8 @@
             // CENTER_PANEL
             // 
             CENTER_PANEL.BorderStyle = BorderStyle.FixedSingle;
+            CENTER_PANEL.Controls.Add(TIP_2);
+            CENTER_PANEL.Controls.Add(_infoBox);
             CENTER_PANEL.Controls.Add(_refreshBtn);
             CENTER_PANEL.Controls.Add(TIP);
             CENTER_PANEL.Controls.Add(_skillIdBox);
@@ -52,6 +56,28 @@
             CENTER_PANEL.Name = "CENTER_PANEL";
             CENTER_PANEL.Size = new Size(248, 212);
             CENTER_PANEL.TabIndex = 0;
+            // 
+            // TIP_2
+            // 
+            TIP_2.AutoSize = true;
+            TIP_2.Location = new Point(47, 128);
+            TIP_2.Name = "TIP_2";
+            TIP_2.Size = new Size(32, 17);
+            TIP_2.TabIndex = 5;
+            TIP_2.Text = "信息";
+            // 
+            // _infoBox
+            // 
+            _infoBox.BackColor = SystemColors.ButtonHighlight;
+            _infoBox.BorderStyle = BorderStyle.None;
+            _infoBox.Font = new Font("Calibri", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            _infoBox.ForeColor = SystemColors.GrayText;
+            _infoBox.Location = new Point(40, 148);
+            _infoBox.Multiline = true;
+            _infoBox.Name = "_infoBox";
+            _infoBox.ReadOnly = true;
+            _infoBox.Size = new Size(166, 38);
+            _infoBox.TabIndex = 4;
             // 
             // _refreshBtn
             // 
@@ -179,5 +205,7 @@
         private TextBox _logBox;
         private Button _cleanBtn;
         private Button _refreshBtn;
+        private Label TIP_2;
+        private TextBox _infoBox;
     }
 }

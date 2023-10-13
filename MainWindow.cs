@@ -8,13 +8,15 @@ namespace UxGame_Testing_Utility
 {
     public partial class MainWindow : Form
     {
-        private readonly LogService _logger;
+        private readonly LogService _debugLogger;
+        private readonly LogService _infoLogger;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            _logger = new(_logBox);
+            _debugLogger = new(_logBox);
+            _infoLogger = new(_infoBox);
         }
 
         /*
@@ -32,11 +34,11 @@ namespace UxGame_Testing_Utility
                 await ApplyTestCase(dataConf, userConf);
                 await RefreshDataInUnity(dataConf);
 
-                _logger.ShowLog("Apply new test case done.", LogLevel.inf);
+                _debugLogger.ShowLog("Apply new test case done.", LogLevel.inf);
             }
             catch (Exception ex)
             {
-                _logger.ShowLog(ex.Message, LogLevel.err);
+                _debugLogger.ShowLog(ex.Message, LogLevel.err);
             }
         }
         private async void RefreshBtn_Click(object sender, EventArgs e)
@@ -46,17 +48,17 @@ namespace UxGame_Testing_Utility
                 var (dataConf, userConf) = await GetConfig();
                 await RefreshDataInUnity(dataConf);
 
-                _logger.ShowLog("Refresh done.", LogLevel.inf);
+                _debugLogger.ShowLog("Refresh done.", LogLevel.inf);
             }
             catch (Exception ex)
             {
-                _logger.ShowLog(ex.Message, LogLevel.err);
+                _debugLogger.ShowLog(ex.Message, LogLevel.err);
             }
         }
 
         private void CleanBtn_Click(object sender, EventArgs e)
         {
-            _logger.CleanLog();
+            _debugLogger.CleanLog();
         }
         private void ConfigBtn_Click(object sender, EventArgs e)
         {
@@ -77,12 +79,12 @@ namespace UxGame_Testing_Utility
 
                     LocalService.SaveConfigDataToLocal(dataConf);
                     LocalService.SaveConfigDataToLocal(userConf);
-                    _logger.ShowLog($"config data is saved.", LogLevel.inf);
+                    _debugLogger.ShowLog($"config data is saved.", LogLevel.inf);
                 }
             }
             catch (Exception ex)
             {
-                _logger.ShowLog(ex.Message, LogLevel.err);
+                _debugLogger.ShowLog(ex.Message, LogLevel.err);
             }
         }
         private void LogBox_TextChanged(object sender, EventArgs e)
@@ -96,12 +98,12 @@ namespace UxGame_Testing_Utility
          */
 
         private async Task<(DataConfig dataConf, UserConfig userConf)> GetConfig()
-        {            
+        {
             var dataConf = await LocalService.TryLoadConfigDataFromLocal<DataConfig>();
 
             var userConf = await LocalService.TryLoadConfigDataFromLocal<UserConfig>();
 
-            _logger.ShowLog("finished loading config.", LogLevel.inf);
+            _debugLogger.ShowLog("finished loading config.", LogLevel.inf);
 
             return (dataConf, userConf);
         }
@@ -120,7 +122,7 @@ namespace UxGame_Testing_Utility
             var dataTab = new ExcelService(dataConf.DataSrcPath);
             await dataTab.InitExcelFile();
 
-            _logger.ShowLog("finished open xlsx.", LogLevel.inf);
+            _debugLogger.ShowLog("finished open xlsx.", LogLevel.inf);
 
             #endregion
 
@@ -128,14 +130,10 @@ namespace UxGame_Testing_Utility
 
             var group = await dataTab.GetSkillGroup(_skillIdBox.Text);
 
-            _logger.ShowLog($"finished get test data. found {group.Count} skills.", LogLevel.inf);
+            _debugLogger.ShowLog($"finished get test data. found {group.Count} skills.", LogLevel.inf);
 
             if (userConf.ShowSKillDetailsAfterLoad)
-            {
-                Array.ForEach(
-                    group.Skills,
-                    skill => _logger.ShowLog(skill.ToString(), LogLevel.inf));
-            }
+                _infoLogger.ShowLog(group.ToString(), LogLevel.non);
 
             #endregion
 
@@ -143,7 +141,7 @@ namespace UxGame_Testing_Utility
 
             await dataTab.ApplySkillGroupDataOn(group, 1);
 
-            _logger.ShowLog($"finished flush data.", LogLevel.inf);
+            _debugLogger.ShowLog($"finished flush data.", LogLevel.inf);
 
             #endregion           
 
@@ -168,10 +166,10 @@ namespace UxGame_Testing_Utility
 
             #region Deploy: Convert Excel To Json
 
-            _logger.ShowLog("calling E2J server in unity...", LogLevel.inf);
+            _debugLogger.ShowLog("calling E2J server in unity...", LogLevel.inf);
 
             var e2jOprMsg = await server.SendCommand(ClientCmd.CONV_EXCEL_TO_JSON);
-            _logger.ShowLog($"{e2jOprMsg}. waiting for {dataConf.E2JWaitingTime} ms...", LogLevel.inf);
+            _debugLogger.ShowLog($"{e2jOprMsg}. waiting for {dataConf.E2JWaitingTime} ms...", LogLevel.inf);
 
             await Task.Delay(dataConf.E2JWaitingTime);
 
@@ -182,10 +180,10 @@ namespace UxGame_Testing_Utility
             server = new NetworkService();
             await server.ConnectToServer();
 
-            _logger.ShowLog("calling J2B server in unity...", LogLevel.inf);
+            _debugLogger.ShowLog("calling J2B server in unity...", LogLevel.inf);
 
             var j2bOprMsg = await server.SendCommand(ClientCmd.CONV_JSON_TO_BIN);
-            _logger.ShowLog($"{j2bOprMsg}. waiting for {dataConf.J2BWaitingTime} ms...", LogLevel.inf);
+            _debugLogger.ShowLog($"{j2bOprMsg}. waiting for {dataConf.J2BWaitingTime} ms...", LogLevel.inf);
 
             await Task.Delay(dataConf.J2BWaitingTime);
 
@@ -196,10 +194,10 @@ namespace UxGame_Testing_Utility
             server = new NetworkService();
             await server.ConnectToServer();
 
-            _logger.ShowLog("refreshing scripts in unity...", LogLevel.inf);
+            _debugLogger.ShowLog("refreshing scripts in unity...", LogLevel.inf);
 
             var refreshOprMsg = await server.SendCommand(ClientCmd.REFRESH_SCRIPTS);
-            _logger.ShowLog($"{refreshOprMsg}.", LogLevel.inf);
+            _debugLogger.ShowLog($"{refreshOprMsg}.", LogLevel.inf);
 
             #endregion
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NPOI.Util.ArrayExtensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,9 +7,20 @@ using System.Threading.Tasks;
 
 namespace UxGame_Testing_Utility.Entities
 {
-    public readonly record struct SkillGroup(Skill[] Skills) 
+    public readonly record struct SkillGroup(Skill[] Skills, string Name) 
     { 
         public int Count => Skills.Length;
+
+        public override string ToString()
+        {
+            string msg = $"{Name}";
+
+            Array.ForEach(
+                Skills,
+                skill => msg += $" · {skill}"
+                );
+            return msg;
+        }
     }
     public readonly record struct Skill(string Id, string BulletId, string ShooterId) 
     {
@@ -28,7 +40,7 @@ namespace UxGame_Testing_Utility.Entities
 
         public override string ToString()
         {
-            return $"id: {this.Id}, bullet: {this.BulletId}, Shooter: {this.ShooterId}";
+            return $"id: {this.Id}, bullet: {this.BulletId}, shooter: {this.ShooterId}";
         }
     }
 }

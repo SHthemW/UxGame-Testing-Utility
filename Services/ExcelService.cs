@@ -77,9 +77,11 @@ namespace UxGame_Testing_Utility.Services
         {
             return await Task.Run(() =>
             {
-                List<Skill> skillsInGroup = new();
-                string currentName = string.Empty;
+                // results
+                List<Skill> skillsInGroup = new();             
+                string skillGroupName = string.Empty;
 
+                string currentName = string.Empty;
                 for (int i = 1; i <= DataSheet!.LastRowNum; i++)
                 {
                     IRow row = DataSheet.GetRow(i);
@@ -96,6 +98,7 @@ namespace UxGame_Testing_Utility.Services
 
                     if (Skill.IsSameGroup(currentId, idOrName) || currentName == idOrName)
                     {
+                        skillGroupName = currentName;
                         skillsInGroup.Add(new Skill(
                             Id: currentId,
                             BulletId: row.GetCell(_buletIdColumnIndex).ToString()!,
@@ -105,7 +108,7 @@ namespace UxGame_Testing_Utility.Services
                 }
 
                 if (skillsInGroup.Count > 0)
-                    return new SkillGroup(skillsInGroup.ToArray());
+                    return new SkillGroup(skillsInGroup.ToArray(), skillGroupName);
                 else
                     throw new Exception($"skill [{idOrName}] was not found.");
             });        

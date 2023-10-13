@@ -18,14 +18,15 @@ namespace UxGame_Testing_Utility.Services
         }    
         internal void ShowLog(string msg, LogLevel level)
         {
-            _logStrBuilder.AppendLine($"[{level}] {msg}");
+            string prefix = level switch
+            {         
+                LogLevel.err => "[err]",
+                LogLevel.inf => "[inf]",
+                _ => string.Empty,
+            };
+
+            _logStrBuilder.AppendLine($"{prefix} {msg}");
             UpdateLog();
-        }
-        internal void ShowLog(string[] msgs, LogLevel level)
-        {
-            Array.ForEach(
-                msgs,
-                msg => ShowLog(msg, level));
         }
         internal void CleanLog()
         {
@@ -45,6 +46,6 @@ namespace UxGame_Testing_Utility.Services
 
     internal enum LogLevel
     {
-        inf = 0, err
+        inf = 0, err, non
     }
 }
