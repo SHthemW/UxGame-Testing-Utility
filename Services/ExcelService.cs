@@ -31,9 +31,9 @@ namespace UxGame_Testing_Utility.Services
         {
             _filePath = excelFilePath ?? throw new ArgumentNullException(nameof(excelFilePath));           
         }
-        internal async Task<(bool suc, string msg)> InitExcelFile()
+        internal async Task InitExcelFile()
         {
-            return await Task.Run(() =>
+            await Task.Run(() =>
             {
                 #region Init Excel File
 
@@ -50,7 +50,7 @@ namespace UxGame_Testing_Utility.Services
                     }
                 }
                 if (_workbook == null)
-                    return (false, "file is in occupying, please close and retry.");
+                    throw new Exception("file is in occupying, please close and retry.");
 
                 #endregion
 
@@ -64,18 +64,16 @@ namespace UxGame_Testing_Utility.Services
                 }
                 catch (NullReferenceException)
                 {
-                    return (false, "excel sheet is failed to init.");
+                    throw new Exception("excel sheet is failed to init.");
                 }
                 catch (KeyNotFoundException e)
                 {
-                    return (false, $"name {e.Message} cannot be found in file.");
+                    throw new Exception($"name {e.Message} cannot be found in file.");
                 }
                 #endregion
-
-                return (true, string.Empty);
             });        
         }
-        internal async Task<(bool suc, SkillGroup rst, string msg)> GetSkillGroup(string idOrName)
+        internal async Task<SkillGroup> GetSkillGroup(string idOrName)
         {
             return await Task.Run(() =>
             {
@@ -107,14 +105,14 @@ namespace UxGame_Testing_Utility.Services
                 }
 
                 if (skillsInGroup.Count > 0)
-                    return (true, new(skillsInGroup.ToArray()), null!);
+                    return new SkillGroup(skillsInGroup.ToArray());
                 else
-                    return (false, default(SkillGroup), $"skill [{idOrName}] was not found.");
+                    throw new Exception($"skill [{idOrName}] was not found.");
             });        
         }
-        internal async Task<(bool suc, string msg)> ApplySkillGroupDataOn(SkillGroup skillGroup, int rowIndex)
+        internal async Task ApplySkillGroupDataOn(SkillGroup skillGroup, int rowIndex)
         {
-            return await Task.Run(() => 
+            await Task.Run(() => 
             {
                 var testAreaSkillId = DataSheet!.GetRow(rowIndex).GetCell(_skillIdColumnIndex).ToString();
 
@@ -128,7 +126,7 @@ namespace UxGame_Testing_Utility.Services
                             $"test area only in id {testAreaSkillId}, " +
                             $"but now is flushing in {currentAreaId}. " +
                             $"please check the lv count of testskill.";
-                        return (false, errmsg);
+                        throw new Exception(errmsg);
                     }
 
                     var bulletIdOrigStyle = DataSheet.GetRow(rowIndex).GetCell(_buletIdColumnIndex).CellStyle;
@@ -152,10 +150,8 @@ namespace UxGame_Testing_Utility.Services
                 }
                 catch (IOException e)
                 {
-                    return (false, e.Message);
+                    throw new Exception(e.Message);
                 }
-
-                return (true, string.Empty);
             });
         }
 

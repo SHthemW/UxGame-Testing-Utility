@@ -17,42 +17,96 @@ namespace UxGame_Testing_Utility
             _logger = new(_logBox);
         }
 
-        private async void StartBtn_Click(object sender, EventArgs e)
+        /*
+         *  UI
+         */
+
+        private async void ApplyAndDeployBtn_Click(object sender, EventArgs e)
         {
-            #region Load Config
-
-            if (string.IsNullOrEmpty(_skillIdBox.Text))
+            try
             {
-                _logger.ShowLog("skill id is empty.", LogLevel.err);
-                return;
-            }
+                if (string.IsNullOrEmpty(_skillIdBox.Text))
+                    throw new Exception("skill id is empty.");
 
-            var dataConfOpr = await LocalService.TryLoadConfigDataFromLocal<DataConfig>();
-            if (!dataConfOpr.suc)
-            {
-                _logger.ShowLog(dataConfOpr.msg, LogLevel.err);
-                return;
-            }
-            DataConfig dataConf = dataConfOpr.rst;
+                var (dataConf, userConf) = await GetConfig();
+                await ApplyTestCase(dataConf, userConf);
+                await RefreshDataInUnity(dataConf);
 
-            var userConfOpr = await LocalService.TryLoadConfigDataFromLocal<UserConfig>();
-            if (!userConfOpr.suc)
-            {
-                _logger.ShowLog(dataConfOpr.msg, LogLevel.err);
-                return;
+                _logger.ShowLog("Apply new test case done.", LogLevel.inf);
             }
-            UserConfig userConf = userConfOpr.rst;
+            catch (Exception ex)
+            {
+                _logger.ShowLog(ex.Message, LogLevel.err);
+            }
+        }
+        private async void RefreshBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var (dataConf, userConf) = await GetConfig();
+                await RefreshDataInUnity(dataConf);
 
-            if (!DataConfig.CheckVaild(dataConf, out var errmsg_conf))
-            {
-                _logger.ShowLog(errmsg_conf!, LogLevel.err);
-                return;
+                _logger.ShowLog("Refresh done.", LogLevel.inf);
             }
+            catch (Exception ex)
+            {
+                _logger.ShowLog(ex.Message, LogLevel.err);
+            }
+        }
+
+        private void CleanBtn_Click(object sender, EventArgs e)
+        {
+            _logger.CleanLog();
+        }
+        private void ConfigBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using ConfigWindow confWindow = new();
+                _ = confWindow.InitShowData();
+
+                var result = confWindow.ShowDialog();
+
+                if (result is DialogResult.OK)
+                {
+                    var dataConf = confWindow.DataConfig;
+                    var userConf = confWindow.UserConfig;
+
+                    if (!DataConfig.CheckVaild(dataConf, out var errmsgs))
+                        throw new Exception(errmsgs[0]);
+
+                    LocalService.SaveConfigDataToLocal(dataConf);
+                    LocalService.SaveConfigDataToLocal(userConf);
+                    _logger.ShowLog($"config data is saved.", LogLevel.inf);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.ShowLog(ex.Message, LogLevel.err);
+            }
+        }
+        private void LogBox_TextChanged(object sender, EventArgs e)
+        {
+            _logBox.SelectionStart = _logBox.Text.Length;
+            _logBox.ScrollToCaret();
+        }
+
+        /*
+         *  Functions
+         */
+
+        private async Task<(DataConfig dataConf, UserConfig userConf)> GetConfig()
+        {            
+            var dataConf = await LocalService.TryLoadConfigDataFromLocal<DataConfig>();
+
+            var userConf = await LocalService.TryLoadConfigDataFromLocal<UserConfig>();
 
             _logger.ShowLog("finished loading config.", LogLevel.inf);
 
-            #endregion
-
+            return (dataConf, userConf);
+        }
+        private async Task ApplyTestCase(DataConfig dataConf, UserConfig userConf)
+        {
             # region Close File Before Process
 
             if (userConf.AutoCloseFileIfOccupying)
@@ -64,15 +118,7 @@ namespace UxGame_Testing_Utility
             #region Load Excel File
 
             var dataTab = new ExcelService(dataConf.DataSrcPath);
-            var tabInitOpr = await dataTab.InitExcelFile();
-
-            if (!tabInitOpr.suc)
-            {
-                _logger.ShowLog(tabInitOpr.msg, LogLevel.err);
-                if (!userConf.AutoCloseFileIfOccupying)
-                    _logger.ShowLog("if you want to close file automatically, go to […Ë÷√].", LogLevel.inf);
-                return;
-            }
+            await dataTab.InitExcelFile();
 
             _logger.ShowLog("finished open xlsx.", LogLevel.inf);
 
@@ -80,14 +126,7 @@ namespace UxGame_Testing_Utility
 
             #region Get Test Target
 
-            var skillGroupGetOpr = await dataTab.GetSkillGroup(_skillIdBox.Text);
-
-            if (!skillGroupGetOpr.suc)
-            {
-                _logger.ShowLog(skillGroupGetOpr.msg!, LogLevel.err);
-                return;
-            }
-            SkillGroup group = skillGroupGetOpr.rst;
+            var group = await dataTab.GetSkillGroup(_skillIdBox.Text);
 
             _logger.ShowLog($"finished get test data. found {group.Count} skills.", LogLevel.inf);
 
@@ -102,13 +141,7 @@ namespace UxGame_Testing_Utility
 
             #region Flush Test Data On Runtime
 
-            var applyToFileOpr = await dataTab.ApplySkillGroupDataOn(group, 1);
-
-            if (!applyToFileOpr.suc)
-            {
-                _logger.ShowLog(applyToFileOpr.msg!, LogLevel.err);
-                return;
-            }
+            await dataTab.ApplySkillGroupDataOn(group, 1);
 
             _logger.ShowLog($"finished flush data.", LogLevel.inf);
 
@@ -123,7 +156,9 @@ namespace UxGame_Testing_Utility
                     );
 
             #endregion
-
+        }
+        private async Task RefreshDataInUnity(DataConfig dataConf)
+        {
             #region Deploy: Connect To Unity
 
             var server = new NetworkService();
@@ -167,42 +202,7 @@ namespace UxGame_Testing_Utility
             _logger.ShowLog($"{refreshOprMsg}.", LogLevel.inf);
 
             #endregion
-
-            _logger.ShowLog("all actions is DONE.", LogLevel.inf);
         }
 
-        private void CleanBtn_Click(object sender, EventArgs e)
-        {
-            _logger.CleanLog();
-        }
-        private void ConfigBtn_Click(object sender, EventArgs e)
-        {
-            using ConfigWindow confWindow = new();
-            _ = confWindow.InitShowData();
-
-            var result = confWindow.ShowDialog();
-
-            if (result is DialogResult.OK)
-            {
-                var dataConf = confWindow.DataConfig;
-                var userConf = confWindow.UserConfig;
-
-                if (!DataConfig.CheckVaild(dataConf, out var errmsgs))
-                {
-                    _logger.ShowLog(errmsgs!, LogLevel.err);
-                    return;
-                }
-
-                LocalService.SaveConfigDataToLocal(dataConf);
-                LocalService.SaveConfigDataToLocal(userConf);
-                _logger.ShowLog($"config data is saved.", LogLevel.inf);
-            }
-        }
-
-        private void LogBox_TextChanged(object sender, EventArgs e)
-        {
-            _logBox.SelectionStart = _logBox.Text.Length;
-            _logBox.ScrollToCaret();
-        }
     }
 }

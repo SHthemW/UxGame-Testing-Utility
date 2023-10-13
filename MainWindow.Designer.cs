@@ -29,9 +29,10 @@
         private void InitializeComponent()
         {
             CENTER_PANEL = new Panel();
+            _refreshBtn = new Button();
             TIP = new Label();
             _skillIdBox = new TextBox();
-            _startBtn = new Button();
+            _applyAndDeployBtn = new Button();
             _logBox = new TextBox();
             TITLE = new Label();
             AUTHOR = new Label();
@@ -43,13 +44,24 @@
             // CENTER_PANEL
             // 
             CENTER_PANEL.BorderStyle = BorderStyle.FixedSingle;
+            CENTER_PANEL.Controls.Add(_refreshBtn);
             CENTER_PANEL.Controls.Add(TIP);
             CENTER_PANEL.Controls.Add(_skillIdBox);
-            CENTER_PANEL.Controls.Add(_startBtn);
+            CENTER_PANEL.Controls.Add(_applyAndDeployBtn);
             CENTER_PANEL.Location = new Point(22, 98);
             CENTER_PANEL.Name = "CENTER_PANEL";
-            CENTER_PANEL.Size = new Size(248, 154);
+            CENTER_PANEL.Size = new Size(248, 212);
             CENTER_PANEL.TabIndex = 0;
+            // 
+            // _refreshBtn
+            // 
+            _refreshBtn.Location = new Point(130, 86);
+            _refreshBtn.Name = "_refreshBtn";
+            _refreshBtn.Size = new Size(88, 28);
+            _refreshBtn.TabIndex = 3;
+            _refreshBtn.Text = "刷新(仅部署)";
+            _refreshBtn.UseVisualStyleBackColor = true;
+            _refreshBtn.Click += RefreshBtn_Click;
             // 
             // TIP
             // 
@@ -67,15 +79,15 @@
             _skillIdBox.Size = new Size(166, 23);
             _skillIdBox.TabIndex = 1;
             // 
-            // _startBtn
+            // _applyAndDeployBtn
             // 
-            _startBtn.Location = new Point(71, 92);
-            _startBtn.Name = "_startBtn";
-            _startBtn.Size = new Size(105, 32);
-            _startBtn.TabIndex = 0;
-            _startBtn.Text = "应用测试并部署";
-            _startBtn.UseVisualStyleBackColor = true;
-            _startBtn.Click += StartBtn_Click;
+            _applyAndDeployBtn.Location = new Point(28, 86);
+            _applyAndDeployBtn.Name = "_applyAndDeployBtn";
+            _applyAndDeployBtn.Size = new Size(89, 28);
+            _applyAndDeployBtn.TabIndex = 0;
+            _applyAndDeployBtn.Text = "应用并部署";
+            _applyAndDeployBtn.UseVisualStyleBackColor = true;
+            _applyAndDeployBtn.Click += ApplyAndDeployBtn_Click;
             // 
             // _logBox
             // 
@@ -83,12 +95,12 @@
             _logBox.BorderStyle = BorderStyle.None;
             _logBox.Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point);
             _logBox.ForeColor = SystemColors.WindowFrame;
-            _logBox.Location = new Point(23, 275);
+            _logBox.Location = new Point(23, 327);
             _logBox.Multiline = true;
             _logBox.Name = "_logBox";
             _logBox.ReadOnly = true;
             _logBox.ScrollBars = ScrollBars.Vertical;
-            _logBox.Size = new Size(247, 94);
+            _logBox.Size = new Size(247, 132);
             _logBox.TabIndex = 3;
             _logBox.Text = "Welcome.";
             _logBox.TextChanged += LogBox_TextChanged;
@@ -117,7 +129,7 @@
             // _configBtn
             // 
             _configBtn.ForeColor = SystemColors.ControlText;
-            _configBtn.Location = new Point(114, 385);
+            _configBtn.Location = new Point(114, 475);
             _configBtn.Name = "_configBtn";
             _configBtn.Size = new Size(75, 23);
             _configBtn.TabIndex = 3;
@@ -127,7 +139,7 @@
             // 
             // _cleanBtn
             // 
-            _cleanBtn.Location = new Point(195, 385);
+            _cleanBtn.Location = new Point(195, 475);
             _cleanBtn.Name = "_cleanBtn";
             _cleanBtn.Size = new Size(75, 23);
             _cleanBtn.TabIndex = 4;
@@ -139,7 +151,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(293, 434);
+            ClientSize = new Size(293, 526);
             Controls.Add(_cleanBtn);
             Controls.Add(_logBox);
             Controls.Add(_configBtn);
@@ -159,12 +171,13 @@
 
         private Panel CENTER_PANEL;
         private TextBox _skillIdBox;
-        private Button _startBtn;
+        private Button _applyAndDeployBtn;
         private Label TITLE;
         private Label AUTHOR;
         private Button _configBtn;
         private Label TIP;
         private TextBox _logBox;
         private Button _cleanBtn;
+        private Button _refreshBtn;
     }
 }

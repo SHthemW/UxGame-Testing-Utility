@@ -47,13 +47,8 @@ namespace UxGame_Testing_Utility
 
         public async Task InitShowData()
         {
-            var dataConfRst = await LocalService.TryLoadConfigDataFromLocal<DataConfig>();
-            if (dataConfRst.suc)
-                this.DataConfig = dataConfRst.rst;
-
-            var userConfRst = await LocalService.TryLoadConfigDataFromLocal<UserConfig>();
-            if (userConfRst.suc)
-                this.UserConfig = userConfRst.rst;
+            DataConfig = await LocalService.TryLoadConfigDataFromLocal<DataConfig>();
+            UserConfig = await LocalService.TryLoadConfigDataFromLocal<UserConfig>();
         }
     }
 }

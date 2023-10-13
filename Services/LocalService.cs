@@ -27,7 +27,11 @@ namespace UxGame_Testing_Utility.Services
             WriteTo(typeof(T).ToString(), jsonStr, Encoding.UTF8);
         }
 
-        public static async Task<(bool suc, T rst, string msg)> TryLoadConfigDataFromLocal<T>() where T : class, new()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <exception cref="Exception">issues when load config.</exception>
+        public static async Task<T> TryLoadConfigDataFromLocal<T>() where T : class, new()
         {           
             return await Task.Run(() =>
             {
@@ -41,12 +45,12 @@ namespace UxGame_Testing_Utility.Services
                 catch (ArgumentException)
                 {
                     var errmsg = "failed to read json from local.";
-                    return (false, null!, errmsg);
+                    throw new Exception(errmsg);
                 }
                 catch (FileNotFoundException)
                 {
                     var errmsg = "json file is not exists.";
-                    return (false, null!, errmsg);
+                    throw new Exception(errmsg);
                 }
 
                 JObject jsonObj;
@@ -57,7 +61,7 @@ namespace UxGame_Testing_Utility.Services
                 catch (JsonReaderException)
                 {
                     var errmsg = "failed to parse json str.";
-                    return (false, null!, errmsg);
+                    throw new Exception(errmsg);
                 }
 
                 foreach (var prop in typeof(T).GetProperties())
@@ -77,12 +81,12 @@ namespace UxGame_Testing_Utility.Services
                     if (result is null)
                     {
                         var errmsg = $"type <{type}> cannot be convert.";
-                        return (false, config, errmsg);
+                        throw new Exception(errmsg);
                     }
 
                     prop.SetValue(config, result);
                 }
-                return (true, config, string.Empty);
+                return config;
             });     
         }
     }
