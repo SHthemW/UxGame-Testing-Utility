@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UxGame Testing Utility", "UxGame Testing Utility.csproj", "{DF639941-1960-400E-B665-E772D2F346AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UxGame Testing Utility", "UxGame Testing Utility.csproj", "{DF639941-1960-400E-B665-E772D2F346AD}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "UxTU Setup", "..\UxTU Setup\UxTU Setup.vdproj", "{1AB0D53A-78D8-4552-B0B3-0EAAA5F64B8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,8 @@ Global
 		{DF639941-1960-400E-B665-E772D2F346AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF639941-1960-400E-B665-E772D2F346AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF639941-1960-400E-B665-E772D2F346AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AB0D53A-78D8-4552-B0B3-0EAAA5F64B8F}.Debug|Any CPU.ActiveCfg = Debug
+		{1AB0D53A-78D8-4552-B0B3-0EAAA5F64B8F}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
