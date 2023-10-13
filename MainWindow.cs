@@ -133,7 +133,10 @@ namespace UxGame_Testing_Utility
             _debugLogger.ShowLog($"finished get test data. found {group.Count} skills.", LogLevel.inf);
 
             if (userConf.ShowSKillDetailsAfterLoad)
+            {
+                _infoLogger.CleanLog();
                 _infoLogger.ShowLog(group.ToString(), LogLevel.non);
+            }
 
             #endregion
 
