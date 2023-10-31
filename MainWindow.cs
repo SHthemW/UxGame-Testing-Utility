@@ -37,7 +37,7 @@ namespace UxGame_Testing_Utility
                 // get test targets
                 var testTargets = _skillIdBox.Text.Split(' ');
 
-                if (testTargets.Length > 1 && !_enbaleSeqChkbox.Checked)
+                if (testTargets.Length > 1 && !_enableSeqChkbox.Checked)
                 {
                     _debugLogger.ShowLog($"cannot test continuous with no-seq option.", LogLevel.err);
                     return;
@@ -50,8 +50,14 @@ namespace UxGame_Testing_Utility
                     // apply test case in local
                     await ApplyTestCase(toTest, dataConf, userConf);
 
-                    // connect to unity and deploy
+                    // connect to unity and deploy                 
                     await RefreshDataInUnity(dataConf);
+
+                    // start test
+                    if (_enableSeqChkbox.Checked)
+                    {
+                        await BgnAutoTestInUnity();
+                    }
 
                     _debugLogger.ShowLog($"Deploy test case <{toTest}> done.", LogLevel.inf);
                 }
@@ -65,7 +71,9 @@ namespace UxGame_Testing_Utility
         {
             try
             {
+                // init config
                 var (dataConf, userConf) = await GetConfig();
+               
                 await RefreshDataInUnity(dataConf);
 
                 _debugLogger.ShowLog("Refresh done.", LogLevel.inf);
@@ -114,7 +122,7 @@ namespace UxGame_Testing_Utility
         }
         private void EnbaleSeqChkbox_CheckedChanged(object sender, EventArgs e)
         {
-            if (_enbaleSeqChkbox.Checked)
+            if (_enableSeqChkbox.Checked)
             {
                 _applyAndDeployBtn.Text = "Ö´ÐÐ×Ô¶¯²âÊÔ";
                 _refreshBtn.Enabled = false;
@@ -193,12 +201,9 @@ namespace UxGame_Testing_Utility
         }
         private async Task RefreshDataInUnity(DataConfig dataConf)
         {
-            #region Deploy: Connect To Unity
-
+            // startup server
             var server = new NetworkService();
             await server.ConnectToServer();
-
-            #endregion
 
             #region Deploy: Convert Excel To Json
 
@@ -238,7 +243,28 @@ namespace UxGame_Testing_Utility
             await Task.Delay(dataConf.J2BWaitingTime);
 
             #endregion
+
+            server.Dispose();
         }
-        
+        private async Task BgnAutoTestInUnity()
+        {
+            // startup server
+            var server = new NetworkService();
+            await server.ConnectToServer();
+
+            _debugLogger.ShowLog("calling auto tester in unity...", LogLevel.inf);
+
+            var autoTestMsg = await server.SendCommand(ClientCmd.BEGIN_AUTO_TEST);    
+            
+            var message = autoTestMsg.Split("--")[0];
+            var recordWaitingSec = float.Parse(autoTestMsg.Split("--")[1]);
+            _debugLogger.ShowLog($"{message}, record waiting: {recordWaitingSec}.", LogLevel.inf);
+
+            await Task.Delay((int)recordWaitingSec * 1000);
+
+            _debugLogger.ShowLog("start record...", LogLevel.inf);
+
+            server.Dispose();
+        }
     }
 }

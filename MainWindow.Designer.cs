@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             CENTER_PANEL = new Panel();
-            _enbaleSeqChkbox = new CheckBox();
+            _enableSeqChkbox = new CheckBox();
             TIP_2 = new Label();
             _infoBox = new TextBox();
             _refreshBtn = new Button();
@@ -47,7 +47,7 @@
             // CENTER_PANEL
             // 
             CENTER_PANEL.BorderStyle = BorderStyle.FixedSingle;
-            CENTER_PANEL.Controls.Add(_enbaleSeqChkbox);
+            CENTER_PANEL.Controls.Add(_enableSeqChkbox);
             CENTER_PANEL.Controls.Add(TIP_2);
             CENTER_PANEL.Controls.Add(_infoBox);
             CENTER_PANEL.Controls.Add(_refreshBtn);
@@ -59,16 +59,16 @@
             CENTER_PANEL.Size = new Size(248, 240);
             CENTER_PANEL.TabIndex = 0;
             // 
-            // _enbaleSeqChkbox
+            // _enableSeqChkbox
             // 
-            _enbaleSeqChkbox.AutoSize = true;
-            _enbaleSeqChkbox.Location = new Point(59, 82);
-            _enbaleSeqChkbox.Name = "_enbaleSeqChkbox";
-            _enbaleSeqChkbox.Size = new Size(123, 21);
-            _enbaleSeqChkbox.TabIndex = 6;
-            _enbaleSeqChkbox.Text = "启用自动测试序列";
-            _enbaleSeqChkbox.UseVisualStyleBackColor = true;
-            _enbaleSeqChkbox.CheckedChanged += EnbaleSeqChkbox_CheckedChanged;
+            _enableSeqChkbox.AutoSize = true;
+            _enableSeqChkbox.Location = new Point(59, 82);
+            _enableSeqChkbox.Name = "_enableSeqChkbox";
+            _enableSeqChkbox.Size = new Size(123, 21);
+            _enableSeqChkbox.TabIndex = 6;
+            _enableSeqChkbox.Text = "启用自动测试序列";
+            _enableSeqChkbox.UseVisualStyleBackColor = true;
+            _enableSeqChkbox.CheckedChanged += EnbaleSeqChkbox_CheckedChanged;
             // 
             // TIP_2
             // 
@@ -220,6 +220,6 @@
         private Button _refreshBtn;
         private Label TIP_2;
         private TextBox _infoBox;
-        private CheckBox _enbaleSeqChkbox;
+        private CheckBox _enableSeqChkbox;
     }
 }

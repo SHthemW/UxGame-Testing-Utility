@@ -7,7 +7,7 @@ using System.Text;
 
 namespace UxGame_Testing_Utility.Services
 {  
-    internal sealed class NetworkService
+    internal sealed class NetworkService : IDisposable
     {
         private readonly Socket _socket;
 
@@ -99,10 +99,14 @@ namespace UxGame_Testing_Utility.Services
             }
         }
 
+        public void Dispose()
+        {
+            _socket.Close();
+            GC.SuppressFinalize(this);
+        }
         ~NetworkService()
         {
-            // 关闭套接字
-            _socket.Close();
+            Dispose();
         }
     }
 
@@ -111,6 +115,11 @@ namespace UxGame_Testing_Utility.Services
         internal const string CONV_EXCEL_TO_JSON = "ConvertExcelToJson";
         internal const string CONV_JSON_TO_BIN = "ConvertJsonToBin";
         internal const string REFRESH_SCRIPTS = "RefreshScripts";
+        internal const string BEGIN_AUTO_TEST = "BeginAutoTest";
+    }
+    internal readonly struct ServerCmd
+    {
+        internal const string BEGIN_RECORD = "BeginRecord";
     }
 
 }
