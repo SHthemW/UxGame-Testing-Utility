@@ -18,14 +18,14 @@ namespace UxGame_Testing_Utility
         {
             get => new(
                   dataSrcPath: _dataSrcPathBox.Text
-                , dplProgPath: _deployProgPathBox.Text
+                , testResPath: _testResSavePathBox.Text
                 , E2JWaitingTime: int.Parse(_E2JWaitTimeBox.Text)
                 , J2BWaitingTime: int.Parse(_J2BWaitTimeBox.Text)
                 );
             private set
             {
                 _dataSrcPathBox.Text = value.DataSrcPath;
-                _deployProgPathBox.Text = value.DplProgPath;
+                _testResSavePathBox.Text = value.DplProgPath;
                 _E2JWaitTimeBox.Text = value.E2JWaitingTime.ToString();
                 _J2BWaitTimeBox.Text = value.J2BWaitingTime.ToString();
             }
@@ -43,7 +43,7 @@ namespace UxGame_Testing_Utility
                 _autoCloseChkBox.Checked = value.AutoCloseFileIfOccupying;
                 _autoOpenChkBox.Checked = value.AutoOpenFileAfterProcess;
             }
-        }     
+        }
 
         public async Task InitShowData()
         {

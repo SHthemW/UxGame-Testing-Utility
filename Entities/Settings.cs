@@ -26,10 +26,10 @@ namespace UxGame_Testing_Utility.Entities
             DataSrcPath = string.Empty;
             DplProgPath = string.Empty;
         }
-        public DataConfig(string dataSrcPath, string dplProgPath, int E2JWaitingTime, int J2BWaitingTime)
+        public DataConfig(string dataSrcPath, string testResPath, int E2JWaitingTime, int J2BWaitingTime)
         {
             DataSrcPath = dataSrcPath ?? throw new ArgumentNullException(nameof(dataSrcPath));
-            DplProgPath = dplProgPath ?? throw new ArgumentNullException(nameof(dplProgPath));
+            DplProgPath = testResPath ?? throw new ArgumentNullException(nameof(testResPath));
             this.E2JWaitingTime = E2JWaitingTime;
             this.J2BWaitingTime = J2BWaitingTime;
         }

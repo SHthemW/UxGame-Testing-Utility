@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             CENTER_PANEL = new Panel();
+            _enbaleSeqChkbox = new CheckBox();
             TIP_2 = new Label();
             _infoBox = new TextBox();
             _refreshBtn = new Button();
@@ -46,6 +47,7 @@
             // CENTER_PANEL
             // 
             CENTER_PANEL.BorderStyle = BorderStyle.FixedSingle;
+            CENTER_PANEL.Controls.Add(_enbaleSeqChkbox);
             CENTER_PANEL.Controls.Add(TIP_2);
             CENTER_PANEL.Controls.Add(_infoBox);
             CENTER_PANEL.Controls.Add(_refreshBtn);
@@ -54,13 +56,24 @@
             CENTER_PANEL.Controls.Add(_applyAndDeployBtn);
             CENTER_PANEL.Location = new Point(22, 98);
             CENTER_PANEL.Name = "CENTER_PANEL";
-            CENTER_PANEL.Size = new Size(248, 212);
+            CENTER_PANEL.Size = new Size(248, 240);
             CENTER_PANEL.TabIndex = 0;
+            // 
+            // _enbaleSeqChkbox
+            // 
+            _enbaleSeqChkbox.AutoSize = true;
+            _enbaleSeqChkbox.Location = new Point(59, 82);
+            _enbaleSeqChkbox.Name = "_enbaleSeqChkbox";
+            _enbaleSeqChkbox.Size = new Size(123, 21);
+            _enbaleSeqChkbox.TabIndex = 6;
+            _enbaleSeqChkbox.Text = "启用自动测试序列";
+            _enbaleSeqChkbox.UseVisualStyleBackColor = true;
+            _enbaleSeqChkbox.CheckedChanged += EnbaleSeqChkbox_CheckedChanged;
             // 
             // TIP_2
             // 
             TIP_2.AutoSize = true;
-            TIP_2.Location = new Point(47, 128);
+            TIP_2.Location = new Point(47, 157);
             TIP_2.Name = "TIP_2";
             TIP_2.Size = new Size(32, 17);
             TIP_2.TabIndex = 5;
@@ -72,7 +85,7 @@
             _infoBox.BorderStyle = BorderStyle.None;
             _infoBox.Font = new Font("Calibri", 9F, FontStyle.Regular, GraphicsUnit.Point);
             _infoBox.ForeColor = SystemColors.GrayText;
-            _infoBox.Location = new Point(40, 148);
+            _infoBox.Location = new Point(40, 177);
             _infoBox.Multiline = true;
             _infoBox.Name = "_infoBox";
             _infoBox.ReadOnly = true;
@@ -81,7 +94,7 @@
             // 
             // _refreshBtn
             // 
-            _refreshBtn.Location = new Point(130, 86);
+            _refreshBtn.Location = new Point(124, 113);
             _refreshBtn.Name = "_refreshBtn";
             _refreshBtn.Size = new Size(88, 28);
             _refreshBtn.TabIndex = 3;
@@ -107,7 +120,7 @@
             // 
             // _applyAndDeployBtn
             // 
-            _applyAndDeployBtn.Location = new Point(28, 86);
+            _applyAndDeployBtn.Location = new Point(27, 113);
             _applyAndDeployBtn.Name = "_applyAndDeployBtn";
             _applyAndDeployBtn.Size = new Size(89, 28);
             _applyAndDeployBtn.TabIndex = 0;
@@ -121,7 +134,7 @@
             _logBox.BorderStyle = BorderStyle.None;
             _logBox.Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point);
             _logBox.ForeColor = SystemColors.WindowFrame;
-            _logBox.Location = new Point(23, 327);
+            _logBox.Location = new Point(23, 358);
             _logBox.Multiline = true;
             _logBox.Name = "_logBox";
             _logBox.ReadOnly = true;
@@ -155,7 +168,7 @@
             // _configBtn
             // 
             _configBtn.ForeColor = SystemColors.ControlText;
-            _configBtn.Location = new Point(114, 475);
+            _configBtn.Location = new Point(114, 506);
             _configBtn.Name = "_configBtn";
             _configBtn.Size = new Size(75, 23);
             _configBtn.TabIndex = 3;
@@ -165,7 +178,7 @@
             // 
             // _cleanBtn
             // 
-            _cleanBtn.Location = new Point(195, 475);
+            _cleanBtn.Location = new Point(195, 506);
             _cleanBtn.Name = "_cleanBtn";
             _cleanBtn.Size = new Size(75, 23);
             _cleanBtn.TabIndex = 4;
@@ -177,7 +190,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(293, 526);
+            ClientSize = new Size(293, 562);
             Controls.Add(_cleanBtn);
             Controls.Add(_logBox);
             Controls.Add(_configBtn);
@@ -207,5 +220,6 @@
         private Button _refreshBtn;
         private Label TIP_2;
         private TextBox _infoBox;
+        private CheckBox _enbaleSeqChkbox;
     }
 }

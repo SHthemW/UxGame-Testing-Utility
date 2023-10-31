@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.DirectoryServices.ActiveDirectory;
 using System.Text;
 using System.Xml.Linq;
 using UxGame_Testing_Utility.Entities;
@@ -30,11 +31,30 @@ namespace UxGame_Testing_Utility
                 if (string.IsNullOrEmpty(_skillIdBox.Text))
                     throw new Exception("skill id is empty.");
 
+                // init config
                 var (dataConf, userConf) = await GetConfig();
-                await ApplyTestCase(dataConf, userConf);
-                await RefreshDataInUnity(dataConf);
 
-                _debugLogger.ShowLog("Apply new test case done.", LogLevel.inf);
+                // get test targets
+                var testTargets = _skillIdBox.Text.Split(' ');
+
+                if (testTargets.Length > 1 && !_enbaleSeqChkbox.Checked)
+                {
+                    _debugLogger.ShowLog($"cannot test continuous with no-seq option.", LogLevel.err);
+                    return;
+                }
+
+                foreach (var toTest in testTargets)
+                {
+                    _debugLogger.ShowLog($"start to deploy case <{toTest}> :", LogLevel.inf);
+
+                    // apply test case in local
+                    await ApplyTestCase(toTest, dataConf, userConf);
+
+                    // connect to unity and deploy
+                    await RefreshDataInUnity(dataConf);
+
+                    _debugLogger.ShowLog($"Deploy test case <{toTest}> done.", LogLevel.inf);
+                }
             }
             catch (Exception ex)
             {
@@ -92,6 +112,19 @@ namespace UxGame_Testing_Utility
             _logBox.SelectionStart = _logBox.Text.Length;
             _logBox.ScrollToCaret();
         }
+        private void EnbaleSeqChkbox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_enbaleSeqChkbox.Checked)
+            {
+                _applyAndDeployBtn.Text = "执行自动测试";
+                _refreshBtn.Enabled = false;
+            }
+            else
+            {
+                _applyAndDeployBtn.Text = "应用并部署";
+                _refreshBtn.Enabled = true;
+            }
+        }
 
         /*
          *  Functions
@@ -107,7 +140,7 @@ namespace UxGame_Testing_Utility
 
             return (dataConf, userConf);
         }
-        private async Task ApplyTestCase(DataConfig dataConf, UserConfig userConf)
+        private async Task ApplyTestCase(string testCaseName, DataConfig dataConf, UserConfig userConf)
         {
             # region Close File Before Process
 
@@ -128,7 +161,7 @@ namespace UxGame_Testing_Utility
 
             #region Get Test Target
 
-            var group = await dataTab.GetSkillGroup(_skillIdBox.Text);
+            var group = await dataTab.GetSkillGroup(testCaseName);
 
             _debugLogger.ShowLog($"finished get test data. found {group.Count} skills.", LogLevel.inf);
 
@@ -202,8 +235,10 @@ namespace UxGame_Testing_Utility
             var refreshOprMsg = await server.SendCommand(ClientCmd.REFRESH_SCRIPTS);
             _debugLogger.ShowLog($"{refreshOprMsg}.", LogLevel.inf);
 
+            await Task.Delay(dataConf.J2BWaitingTime);
+
             #endregion
         }
-
+        
     }
 }

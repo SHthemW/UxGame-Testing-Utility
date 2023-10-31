@@ -30,7 +30,7 @@
         {
             TIP_DATASRC = new Label();
             _dataSrcPathBox = new TextBox();
-            _deployProgPathBox = new TextBox();
+            _testResSavePathBox = new TextBox();
             TIP_PROG = new Label();
             TIP = new Label();
             _okBtn = new Button();
@@ -61,21 +61,21 @@
             _dataSrcPathBox.Size = new Size(207, 23);
             _dataSrcPathBox.TabIndex = 1;
             // 
-            // _deployProgPathBox
+            // _testResSavePathBox
             // 
-            _deployProgPathBox.Location = new Point(23, 142);
-            _deployProgPathBox.Name = "_deployProgPathBox";
-            _deployProgPathBox.Size = new Size(207, 23);
-            _deployProgPathBox.TabIndex = 3;
+            _testResSavePathBox.Location = new Point(23, 142);
+            _testResSavePathBox.Name = "_testResSavePathBox";
+            _testResSavePathBox.Size = new Size(207, 23);
+            _testResSavePathBox.TabIndex = 3;
             // 
             // TIP_PROG
             // 
             TIP_PROG.AutoSize = true;
             TIP_PROG.Location = new Point(23, 122);
             TIP_PROG.Name = "TIP_PROG";
-            TIP_PROG.Size = new Size(83, 17);
+            TIP_PROG.Size = new Size(131, 17);
             TIP_PROG.TabIndex = 2;
-            TIP_PROG.Text = "部署程序路径:";
+            TIP_PROG.Text = "测试产出资源存放路径:";
             // 
             // TIP
             // 
@@ -196,7 +196,7 @@
             Controls.Add(TITLE_1);
             Controls.Add(_okBtn);
             Controls.Add(TIP);
-            Controls.Add(_deployProgPathBox);
+            Controls.Add(_testResSavePathBox);
             Controls.Add(TIP_PROG);
             Controls.Add(_dataSrcPathBox);
             Controls.Add(TIP_DATASRC);
@@ -212,7 +212,7 @@
 
         private Label TIP_DATASRC;
         private TextBox _dataSrcPathBox;
-        private TextBox _deployProgPathBox;
+        private TextBox _testResSavePathBox;
         private Label TIP_PROG;
         private Label TIP;
         private Button _okBtn;
