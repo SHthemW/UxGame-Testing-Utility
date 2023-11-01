@@ -57,6 +57,7 @@ namespace UxGame_Testing_Utility
                     if (_enableSeqChkbox.Checked)
                     {
                         await BgnAutoTestInUnity(dataConf, toTest);
+                        await Task.Delay(2000);
                     }
 
                     _debugLogger.ShowLog($"Deploy test case <{toTest}> done.", LogLevel.inf);
@@ -102,7 +103,7 @@ namespace UxGame_Testing_Utility
                     var dataConf = confWindow.DataConfig;
                     var userConf = confWindow.UserConfig;
 
-                    if (!DataConfig.CheckVaild(dataConf, out var errmsgs))
+                    if (dataConf.ContainsInvaild(out var errmsgs))
                         throw new Exception(errmsgs[0]);
 
                     LocalService.SaveConfigDataToLocal(dataConf);
@@ -240,7 +241,7 @@ namespace UxGame_Testing_Utility
             var refreshOprMsg = await server.SendCommand(ClientCmd.REFRESH_SCRIPTS);
             _debugLogger.ShowLog($"{refreshOprMsg}.", LogLevel.inf);
 
-            await Task.Delay(dataConf.J2BWaitingTime);
+            await Task.Delay(dataConf.RfsWaitingTime);
 
             #endregion
 
@@ -260,7 +261,7 @@ namespace UxGame_Testing_Utility
             
             var message = autoTestMsg.Split("--")[0];
             var recordWaitingSec = float.Parse(autoTestMsg.Split("--")[1]);
-            _debugLogger.ShowLog($"{message}, record waiting: {recordWaitingSec}.", LogLevel.inf);
+            _debugLogger.ShowLog($"{message} {recordWaitingSec}.", LogLevel.inf);
 
             await Task.Delay((int)recordWaitingSec * 1000);
 
@@ -272,9 +273,11 @@ namespace UxGame_Testing_Utility
 
             await new ScreenRecorder(
                 scope: (Width: 360, Height: 640, Left: -720, Top: 100),           
-                config: new RecordProperty(outputPath: $"{dataConf.DplProgPath}/{testCaseName}.gif", FPS: 30),
-                durationSec: 10)
+                config: new RecordProperty(outputPath: $"{dataConf.TestRecPath}{testCaseName}.gif", FPS: 30),
+                durationSec: 18)
             .Record();
+
+            _debugLogger.ShowLog("finished record...", LogLevel.inf);
 
             #endregion
 

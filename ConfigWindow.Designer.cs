@@ -43,6 +43,9 @@
             TITLE_3 = new Label();
             _J2BWaitTimeBox = new TextBox();
             TITLE_4 = new Label();
+            TIT_E2J = new Label();
+            label1 = new Label();
+            _rfsWaitTImeBox = new TextBox();
             SuspendLayout();
             // 
             // TIP_DATASRC
@@ -149,9 +152,9 @@
             // 
             // _E2JWaitTimeBox
             // 
-            _E2JWaitTimeBox.Location = new Point(23, 200);
+            _E2JWaitTimeBox.Location = new Point(59, 200);
             _E2JWaitTimeBox.Name = "_E2JWaitTimeBox";
-            _E2JWaitTimeBox.Size = new Size(91, 23);
+            _E2JWaitTimeBox.Size = new Size(29, 23);
             _E2JWaitTimeBox.TabIndex = 13;
             // 
             // TITLE_3
@@ -159,25 +162,50 @@
             TITLE_3.AutoSize = true;
             TITLE_3.Location = new Point(23, 180);
             TITLE_3.Name = "TITLE_3";
-            TITLE_3.Size = new Size(95, 17);
+            TITLE_3.Size = new Size(132, 17);
             TITLE_3.TabIndex = 12;
-            TITLE_3.Text = "E2J等待时间ms:";
+            TITLE_3.Text = "部署行为等待时间(ms):";
             // 
             // _J2BWaitTimeBox
             // 
-            _J2BWaitTimeBox.Location = new Point(138, 200);
+            _J2BWaitTimeBox.Location = new Point(131, 200);
             _J2BWaitTimeBox.Name = "_J2BWaitTimeBox";
-            _J2BWaitTimeBox.Size = new Size(92, 23);
+            _J2BWaitTimeBox.Size = new Size(29, 23);
             _J2BWaitTimeBox.TabIndex = 14;
             // 
             // TITLE_4
             // 
             TITLE_4.AutoSize = true;
-            TITLE_4.Location = new Point(138, 180);
+            TITLE_4.Location = new Point(94, 203);
             TITLE_4.Name = "TITLE_4";
-            TITLE_4.Size = new Size(96, 17);
+            TITLE_4.Size = new Size(31, 17);
             TITLE_4.TabIndex = 15;
-            TITLE_4.Text = "J2B等待时间ms:";
+            TITLE_4.Text = "J2B:";
+            // 
+            // TIT_E2J
+            // 
+            TIT_E2J.AutoSize = true;
+            TIT_E2J.Location = new Point(23, 203);
+            TIT_E2J.Name = "TIT_E2J";
+            TIT_E2J.Size = new Size(30, 17);
+            TIT_E2J.TabIndex = 16;
+            TIT_E2J.Text = "E2J:";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(166, 203);
+            label1.Name = "label1";
+            label1.Size = new Size(29, 17);
+            label1.TabIndex = 18;
+            label1.Text = "Rfs:";
+            // 
+            // _rfsWaitTImeBox
+            // 
+            _rfsWaitTImeBox.Location = new Point(201, 200);
+            _rfsWaitTImeBox.Name = "_rfsWaitTImeBox";
+            _rfsWaitTImeBox.Size = new Size(29, 23);
+            _rfsWaitTImeBox.TabIndex = 17;
             // 
             // ConfigWindow
             // 
@@ -185,6 +213,9 @@
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(255, 441);
+            Controls.Add(label1);
+            Controls.Add(_rfsWaitTImeBox);
+            Controls.Add(TIT_E2J);
             Controls.Add(TITLE_4);
             Controls.Add(_J2BWaitTimeBox);
             Controls.Add(_E2JWaitTimeBox);
@@ -225,5 +256,8 @@
         private Label TITLE_3;
         private TextBox _J2BWaitTimeBox;
         private Label TITLE_4;
+        private Label TIT_E2J;
+        private Label label1;
+        private TextBox _rfsWaitTImeBox;
     }
 }

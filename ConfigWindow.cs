@@ -18,16 +18,18 @@ namespace UxGame_Testing_Utility
         {
             get => new(
                   dataSrcPath: _dataSrcPathBox.Text
-                , testResPath: _testResSavePathBox.Text
+                , testRecPath: _testResSavePathBox.Text
                 , E2JWaitingTime: int.Parse(_E2JWaitTimeBox.Text)
                 , J2BWaitingTime: int.Parse(_J2BWaitTimeBox.Text)
+                , rfsWaitingTime: int.Parse(_rfsWaitTImeBox.Text)
                 );
             private set
             {
                 _dataSrcPathBox.Text = value.DataSrcPath;
-                _testResSavePathBox.Text = value.DplProgPath;
+                _testResSavePathBox.Text = value.TestRecPath;
                 _E2JWaitTimeBox.Text = value.E2JWaitingTime.ToString();
                 _J2BWaitTimeBox.Text = value.J2BWaitingTime.ToString();
+                _rfsWaitTImeBox.Text = value.RfsWaitingTime.ToString();
             }
         }
         public UserConfig UserConfig

@@ -10,66 +10,68 @@ namespace UxGame_Testing_Utility.Entities
     public sealed class DataConfig
     {
         public string DataSrcPath { get; init; }
-        public string DplProgPath { get; init; }
+        public string TestRecPath { get; init; }
 
-        /// <remarks>
-        /// time unit: ms
-        /// </remarks>
         public int E2JWaitingTime { get; init; }
-        /// <remarks>
-        /// time unit: ms
-        /// </remarks>
         public int J2BWaitingTime { get; init; }
+        public int RfsWaitingTime { get; init; }
 
         public DataConfig() 
         {
             DataSrcPath = string.Empty;
-            DplProgPath = string.Empty;
+            TestRecPath = string.Empty;
         }
-        public DataConfig(string dataSrcPath, string testResPath, int E2JWaitingTime, int J2BWaitingTime)
+        public DataConfig(string dataSrcPath, string testRecPath, int E2JWaitingTime, int J2BWaitingTime, int rfsWaitingTime)
         {
             DataSrcPath = dataSrcPath ?? throw new ArgumentNullException(nameof(dataSrcPath));
-            DplProgPath = testResPath ?? throw new ArgumentNullException(nameof(testResPath));
+            TestRecPath = testRecPath ?? throw new ArgumentNullException(nameof(testRecPath));
             this.E2JWaitingTime = E2JWaitingTime;
             this.J2BWaitingTime = J2BWaitingTime;
+            this.RfsWaitingTime = rfsWaitingTime;
         }
-        public static bool CheckVaild(DataConfig conf, out string?[] errmsgs)
+        public bool ContainsInvaild(out string?[] errmsgs)
         {
             List<string?> errList = new();
 
-            if (!PathIsValid(conf.DataSrcPath, out var reason_datasrc))
-                errList.Add($"config {nameof(conf.DataSrcPath)} is invalid. {reason_datasrc}");
+            #region DataSrcPath
 
-            if (!PathIsValid(conf.DplProgPath, out var reason_dplprog))
-                errList.Add($"config {nameof(conf.DplProgPath)} is invalid. {reason_dplprog}");
+            if (!DataSrcPath.Contains('.'))
+                errList.Add($"config {nameof(DataSrcPath)} must be a specific file.");
+
+            if (!File.Exists(DataSrcPath))
+                errList.Add($"file {nameof(DataSrcPath)} not exist.");
+
+            #endregion
+
+            #region TestRecPath
+
+            if (TestRecPath.Contains('.'))
+                errList.Add($"config {nameof(TestRecPath)} must be a directory, not file.");
+
+            if (!TestRecPath.EndsWith('\\'))
+                errList.Add($"config {nameof(TestRecPath)} must end with menu split char.");
+
+            #endregion
+
+            #region WaitingTime
+
+            if (E2JWaitingTime > 20000 || J2BWaitingTime > 20000 || RfsWaitingTime > 20000)
+                errList.Add($"action wait time seems too long. please check.");
+
+            if (E2JWaitingTime == 0 || J2BWaitingTime == 0 || RfsWaitingTime == 0)
+                errList.Add($"action wait time seems not initalized. please check.");
+
+            #endregion
 
             errmsgs = errList.ToArray();
-            return errmsgs.Length == 0;
-
-            static bool PathIsValid(string path, out string? errmsg) 
-            {
-                if (string.IsNullOrEmpty(path))
-                {
-                    errmsg = "path str is empty.";
-                    return false;
-                }
-
-                if (!File.Exists(path))
-                {
-                    errmsg = "such file was not found.";
-                    return false;
-                }
-
-                errmsg = null;
-                return true;
-            }
+            return errmsgs.Length != 0;
         }
 
         public override string ToString()
         {
             return
                 $"{nameof(DataSrcPath)}: {DataSrcPath} \n" +
-                $"{nameof(DplProgPath)}: {DplProgPath} \n";
+                $"{nameof(TestRecPath)}: {TestRecPath} \n";
         }
     }  
 
