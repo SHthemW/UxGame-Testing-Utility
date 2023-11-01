@@ -56,7 +56,7 @@ namespace UxGame_Testing_Utility
                     // start test
                     if (_enableSeqChkbox.Checked)
                     {
-                        await BgnAutoTestInUnity();
+                        await BgnAutoTestInUnity(toTest);
                     }
 
                     _debugLogger.ShowLog($"Deploy test case <{toTest}> done.", LogLevel.inf);
@@ -246,7 +246,7 @@ namespace UxGame_Testing_Utility
 
             server.Dispose();
         }
-        private async Task BgnAutoTestInUnity()
+        private async Task BgnAutoTestInUnity(string testCaseName)
         {
             // startup server
             var server = new NetworkService();
@@ -263,6 +263,12 @@ namespace UxGame_Testing_Utility
             await Task.Delay((int)recordWaitingSec * 1000);
 
             _debugLogger.ShowLog("start record...", LogLevel.inf);
+
+            await new ScreenRecorder(
+                scope: (Width: 360, Height: 640, Left: -720, Top: 100),           
+                config: new RecordProperty(outputPath: $"E://{testCaseName}.gif", FPS: 30),
+                durationSec: 10)
+            .Record();
 
             server.Dispose();
         }
