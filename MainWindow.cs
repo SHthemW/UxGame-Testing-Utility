@@ -48,7 +48,7 @@ namespace UxGame_Testing_Utility
                     _debugLogger.ShowLog($"start to deploy case <{toTest}> :", LogLevel.inf);
 
                     // apply test case in local
-                    await ApplyTestCase(toTest, dataConf, userConf);
+                    await ApplyTestCaseInTab(dataConf, toTest, userConf);
 
                     // connect to unity and deploy                 
                     await RefreshDataInUnity(dataConf);
@@ -56,7 +56,7 @@ namespace UxGame_Testing_Utility
                     // start test
                     if (_enableSeqChkbox.Checked)
                     {
-                        await BgnAutoTestInUnity(toTest);
+                        await BgnAutoTestInUnity(dataConf, toTest);
                     }
 
                     _debugLogger.ShowLog($"Deploy test case <{toTest}> done.", LogLevel.inf);
@@ -148,7 +148,7 @@ namespace UxGame_Testing_Utility
 
             return (dataConf, userConf);
         }
-        private async Task ApplyTestCase(string testCaseName, DataConfig dataConf, UserConfig userConf)
+        private async Task ApplyTestCaseInTab(DataConfig dataConf, string testCaseName, UserConfig userConf)
         {
             # region Close File Before Process
 
@@ -246,11 +246,13 @@ namespace UxGame_Testing_Utility
 
             server.Dispose();
         }
-        private async Task BgnAutoTestInUnity(string testCaseName)
+        private async Task BgnAutoTestInUnity(DataConfig dataConf, string testCaseName)
         {
             // startup server
             var server = new NetworkService();
             await server.ConnectToServer();
+
+            #region Test: Call auto testing in Unity
 
             _debugLogger.ShowLog("calling auto tester in unity...", LogLevel.inf);
 
@@ -262,13 +264,19 @@ namespace UxGame_Testing_Utility
 
             await Task.Delay((int)recordWaitingSec * 1000);
 
+            #endregion
+
+            #region Test: Begin Record
+
             _debugLogger.ShowLog("start record...", LogLevel.inf);
 
             await new ScreenRecorder(
                 scope: (Width: 360, Height: 640, Left: -720, Top: 100),           
-                config: new RecordProperty(outputPath: $"E://{testCaseName}.gif", FPS: 30),
+                config: new RecordProperty(outputPath: $"{dataConf.DplProgPath}/{testCaseName}.gif", FPS: 30),
                 durationSec: 10)
             .Record();
+
+            #endregion
 
             server.Dispose();
         }
