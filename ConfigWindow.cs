@@ -22,6 +22,12 @@ namespace UxGame_Testing_Utility
                 , E2JWaitingTime: int.Parse(_E2JWaitTimeBox.Text)
                 , J2BWaitingTime: int.Parse(_J2BWaitTimeBox.Text)
                 , rfsWaitingTime: int.Parse(_rfsWaitTImeBox.Text)
+                , recScope_L: int.Parse(_recScopeLBox.Text)
+                , recScope_T: int.Parse(_recScopeTBox.Text)
+                , recScope_W: int.Parse(_recScopeWBox.Text)
+                , recScope_H: int.Parse(_recScopeHBox.Text)
+                , recQuality: int.Parse(_recPropQlBox.Text)
+                , recDurtion: int.Parse(_recPropDuBox.Text)
                 );
             private set
             {
@@ -30,6 +36,12 @@ namespace UxGame_Testing_Utility
                 _E2JWaitTimeBox.Text = value.E2JWaitingTime.ToString();
                 _J2BWaitTimeBox.Text = value.J2BWaitingTime.ToString();
                 _rfsWaitTImeBox.Text = value.RfsWaitingTime.ToString();
+                _recScopeLBox.Text = value.RecScope_L.ToString();
+                _recScopeTBox.Text = value.RecScope_T.ToString();
+                _recScopeWBox.Text = value.RecScope_W.ToString();
+                _recScopeHBox.Text = value.RecScope_H.ToString();
+                _recPropQlBox.Text = value.RecQuality.ToString();
+                _recPropDuBox.Text = value.RecDurtion.ToString();
             }
         }
         public UserConfig UserConfig

@@ -32,7 +32,7 @@ namespace UxGame_Testing_Utility.Services
                 {
                     g.CopyFromScreen(new Point(_scope.Left, _scope.Top), Point.Empty, new Size(_scope.Width, _scope.Height));
                 }
-                await gif.AddFrameAsync(bitmap, quality: AnimatedGif.GifQuality.Bit8);
+                await gif.AddFrameAsync(bitmap, quality: _config.Quality);
             }
         }
 

@@ -16,18 +16,42 @@ namespace UxGame_Testing_Utility.Entities
         public int J2BWaitingTime { get; init; }
         public int RfsWaitingTime { get; init; }
 
+        public int RecScope_L { get; init; }
+        public int RecScope_T { get; init; }
+        public int RecScope_W { get; init; }
+        public int RecScope_H { get; init; }
+        public int RecQuality { get; init; }
+        public int RecDurtion { get; init; }
+
         public DataConfig() 
         {
             DataSrcPath = string.Empty;
             TestRecPath = string.Empty;
         }
-        public DataConfig(string dataSrcPath, string testRecPath, int E2JWaitingTime, int J2BWaitingTime, int rfsWaitingTime)
+        public DataConfig(
+            string dataSrcPath,
+            string testRecPath,
+            int E2JWaitingTime,
+            int J2BWaitingTime,
+            int rfsWaitingTime,
+            int recScope_L,
+            int recScope_T,
+            int recScope_W,
+            int recScope_H,
+            int recQuality,
+            int recDurtion)
         {
             DataSrcPath = dataSrcPath ?? throw new ArgumentNullException(nameof(dataSrcPath));
             TestRecPath = testRecPath ?? throw new ArgumentNullException(nameof(testRecPath));
             this.E2JWaitingTime = E2JWaitingTime;
             this.J2BWaitingTime = J2BWaitingTime;
             this.RfsWaitingTime = rfsWaitingTime;
+            RecScope_L = recScope_L;
+            RecScope_T = recScope_T;
+            RecScope_W = recScope_W;
+            RecScope_H = recScope_H;
+            RecQuality = recQuality;
+            RecDurtion = recDurtion;
         }
         public bool ContainsInvaild(out string?[] errmsgs)
         {

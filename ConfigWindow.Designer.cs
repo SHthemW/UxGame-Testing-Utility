@@ -46,6 +46,22 @@
             TIT_E2J = new Label();
             label1 = new Label();
             _rfsWaitTImeBox = new TextBox();
+            TIT_ACTCONF = new Label();
+            TIT_REC = new Label();
+            TIT_SCOPE = new Label();
+            _recScopeLBox = new TextBox();
+            _recScopeTBox = new TextBox();
+            TIT_L = new Label();
+            TIT_T = new Label();
+            TIT_H = new Label();
+            TIT_W = new Label();
+            _recScopeHBox = new TextBox();
+            _recScopeWBox = new TextBox();
+            TIT_RECDURATION = new Label();
+            _recPropDuBox = new TextBox();
+            TIT_D = new Label();
+            TIT_Q = new Label();
+            _recPropQlBox = new TextBox();
             SuspendLayout();
             // 
             // TIP_DATASRC
@@ -53,9 +69,9 @@
             TIP_DATASRC.AutoSize = true;
             TIP_DATASRC.Location = new Point(23, 66);
             TIP_DATASRC.Name = "TIP_DATASRC";
-            TIP_DATASRC.Size = new Size(71, 17);
+            TIP_DATASRC.Size = new Size(175, 17);
             TIP_DATASRC.TabIndex = 0;
-            TIP_DATASRC.Text = "数据源路径:";
+            TIP_DATASRC.Text = "数据源表路径(落实到具体文件):";
             // 
             // _dataSrcPathBox
             // 
@@ -84,16 +100,16 @@
             // 
             TIP.AutoSize = true;
             TIP.ForeColor = SystemColors.ControlDark;
-            TIP.Location = new Point(102, 32);
+            TIP.Location = new Point(90, 32);
             TIP.Name = "TIP";
-            TIP.Size = new Size(128, 17);
+            TIP.Size = new Size(140, 17);
             TIP.TabIndex = 4;
-            TIP.Text = "路径请落实到具体文件";
+            TIP.Text = "点击确定将自动保存设置";
             // 
             // _okBtn
             // 
             _okBtn.DialogResult = DialogResult.OK;
-            _okBtn.Location = new Point(89, 389);
+            _okBtn.Location = new Point(89, 540);
             _okBtn.Name = "_okBtn";
             _okBtn.Size = new Size(75, 23);
             _okBtn.TabIndex = 5;
@@ -114,7 +130,7 @@
             // 
             TITLE_2.AutoSize = true;
             TITLE_2.Font = new Font("Microsoft YaHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            TITLE_2.Location = new Point(23, 246);
+            TITLE_2.Location = new Point(23, 397);
             TITLE_2.Name = "TITLE_2";
             TITLE_2.Size = new Size(56, 17);
             TITLE_2.TabIndex = 8;
@@ -123,7 +139,7 @@
             // _enableShowSkillDetailsChkBox
             // 
             _enableShowSkillDetailsChkBox.AutoSize = true;
-            _enableShowSkillDetailsChkBox.Location = new Point(23, 276);
+            _enableShowSkillDetailsChkBox.Location = new Point(23, 427);
             _enableShowSkillDetailsChkBox.Name = "_enableShowSkillDetailsChkBox";
             _enableShowSkillDetailsChkBox.Size = new Size(171, 21);
             _enableShowSkillDetailsChkBox.TabIndex = 9;
@@ -133,7 +149,7 @@
             // _autoCloseChkBox
             // 
             _autoCloseChkBox.AutoSize = true;
-            _autoCloseChkBox.Location = new Point(23, 315);
+            _autoCloseChkBox.Location = new Point(23, 466);
             _autoCloseChkBox.Name = "_autoCloseChkBox";
             _autoCloseChkBox.Size = new Size(159, 21);
             _autoCloseChkBox.TabIndex = 10;
@@ -143,7 +159,7 @@
             // _autoOpenChkBox
             // 
             _autoOpenChkBox.AutoSize = true;
-            _autoOpenChkBox.Location = new Point(23, 342);
+            _autoOpenChkBox.Location = new Point(23, 493);
             _autoOpenChkBox.Name = "_autoOpenChkBox";
             _autoOpenChkBox.Size = new Size(159, 21);
             _autoOpenChkBox.TabIndex = 11;
@@ -152,7 +168,7 @@
             // 
             // _E2JWaitTimeBox
             // 
-            _E2JWaitTimeBox.Location = new Point(59, 200);
+            _E2JWaitTimeBox.Location = new Point(59, 236);
             _E2JWaitTimeBox.Name = "_E2JWaitTimeBox";
             _E2JWaitTimeBox.Size = new Size(29, 23);
             _E2JWaitTimeBox.TabIndex = 13;
@@ -160,7 +176,7 @@
             // TITLE_3
             // 
             TITLE_3.AutoSize = true;
-            TITLE_3.Location = new Point(23, 180);
+            TITLE_3.Location = new Point(23, 216);
             TITLE_3.Name = "TITLE_3";
             TITLE_3.Size = new Size(132, 17);
             TITLE_3.TabIndex = 12;
@@ -168,7 +184,7 @@
             // 
             // _J2BWaitTimeBox
             // 
-            _J2BWaitTimeBox.Location = new Point(131, 200);
+            _J2BWaitTimeBox.Location = new Point(131, 236);
             _J2BWaitTimeBox.Name = "_J2BWaitTimeBox";
             _J2BWaitTimeBox.Size = new Size(29, 23);
             _J2BWaitTimeBox.TabIndex = 14;
@@ -176,7 +192,7 @@
             // TITLE_4
             // 
             TITLE_4.AutoSize = true;
-            TITLE_4.Location = new Point(94, 203);
+            TITLE_4.Location = new Point(94, 239);
             TITLE_4.Name = "TITLE_4";
             TITLE_4.Size = new Size(31, 17);
             TITLE_4.TabIndex = 15;
@@ -185,7 +201,7 @@
             // TIT_E2J
             // 
             TIT_E2J.AutoSize = true;
-            TIT_E2J.Location = new Point(23, 203);
+            TIT_E2J.Location = new Point(23, 239);
             TIT_E2J.Name = "TIT_E2J";
             TIT_E2J.Size = new Size(30, 17);
             TIT_E2J.TabIndex = 16;
@@ -194,7 +210,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(166, 203);
+            label1.Location = new Point(166, 239);
             label1.Name = "label1";
             label1.Size = new Size(29, 17);
             label1.TabIndex = 18;
@@ -202,17 +218,166 @@
             // 
             // _rfsWaitTImeBox
             // 
-            _rfsWaitTImeBox.Location = new Point(201, 200);
+            _rfsWaitTImeBox.Location = new Point(201, 236);
             _rfsWaitTImeBox.Name = "_rfsWaitTImeBox";
             _rfsWaitTImeBox.Size = new Size(29, 23);
             _rfsWaitTImeBox.TabIndex = 17;
+            // 
+            // TIT_ACTCONF
+            // 
+            TIT_ACTCONF.AutoSize = true;
+            TIT_ACTCONF.Font = new Font("Microsoft YaHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            TIT_ACTCONF.Location = new Point(23, 185);
+            TIT_ACTCONF.Name = "TIT_ACTCONF";
+            TIT_ACTCONF.Size = new Size(56, 17);
+            TIT_ACTCONF.TabIndex = 19;
+            TIT_ACTCONF.Text = "行为设置";
+            // 
+            // TIT_REC
+            // 
+            TIT_REC.AutoSize = true;
+            TIT_REC.Location = new Point(23, 273);
+            TIT_REC.Name = "TIT_REC";
+            TIT_REC.Size = new Size(59, 17);
+            TIT_REC.TabIndex = 20;
+            TIT_REC.Text = "自动录制:";
+            // 
+            // TIT_SCOPE
+            // 
+            TIT_SCOPE.AutoSize = true;
+            TIT_SCOPE.Location = new Point(23, 299);
+            TIT_SCOPE.Name = "TIT_SCOPE";
+            TIT_SCOPE.Size = new Size(35, 17);
+            TIT_SCOPE.TabIndex = 21;
+            TIT_SCOPE.Text = "范围:";
+            // 
+            // _recScopeLBox
+            // 
+            _recScopeLBox.Location = new Point(110, 296);
+            _recScopeLBox.Name = "_recScopeLBox";
+            _recScopeLBox.Size = new Size(50, 23);
+            _recScopeLBox.TabIndex = 22;
+            // 
+            // _recScopeTBox
+            // 
+            _recScopeTBox.Location = new Point(180, 296);
+            _recScopeTBox.Name = "_recScopeTBox";
+            _recScopeTBox.Size = new Size(50, 23);
+            _recScopeTBox.TabIndex = 23;
+            // 
+            // TIT_L
+            // 
+            TIT_L.AutoSize = true;
+            TIT_L.Location = new Point(94, 299);
+            TIT_L.Name = "TIT_L";
+            TIT_L.Size = new Size(14, 17);
+            TIT_L.TabIndex = 24;
+            TIT_L.Text = "L";
+            // 
+            // TIT_T
+            // 
+            TIT_T.AutoSize = true;
+            TIT_T.Location = new Point(163, 299);
+            TIT_T.Name = "TIT_T";
+            TIT_T.Size = new Size(15, 17);
+            TIT_T.TabIndex = 25;
+            TIT_T.Text = "T";
+            // 
+            // TIT_H
+            // 
+            TIT_H.AutoSize = true;
+            TIT_H.Location = new Point(162, 328);
+            TIT_H.Name = "TIT_H";
+            TIT_H.Size = new Size(17, 17);
+            TIT_H.TabIndex = 29;
+            TIT_H.Text = "H";
+            // 
+            // TIT_W
+            // 
+            TIT_W.AutoSize = true;
+            TIT_W.Location = new Point(88, 328);
+            TIT_W.Name = "TIT_W";
+            TIT_W.Size = new Size(20, 17);
+            TIT_W.TabIndex = 28;
+            TIT_W.Text = "W";
+            // 
+            // _recScopeHBox
+            // 
+            _recScopeHBox.Location = new Point(180, 325);
+            _recScopeHBox.Name = "_recScopeHBox";
+            _recScopeHBox.Size = new Size(50, 23);
+            _recScopeHBox.TabIndex = 27;
+            // 
+            // _recScopeWBox
+            // 
+            _recScopeWBox.Location = new Point(110, 325);
+            _recScopeWBox.Name = "_recScopeWBox";
+            _recScopeWBox.Size = new Size(50, 23);
+            _recScopeWBox.TabIndex = 26;
+            // 
+            // TIT_RECDURATION
+            // 
+            TIT_RECDURATION.AutoSize = true;
+            TIT_RECDURATION.Location = new Point(23, 357);
+            TIT_RECDURATION.Name = "TIT_RECDURATION";
+            TIT_RECDURATION.Size = new Size(35, 17);
+            TIT_RECDURATION.TabIndex = 30;
+            TIT_RECDURATION.Text = "属性:";
+            // 
+            // _recPropDuBox
+            // 
+            _recPropDuBox.Location = new Point(110, 354);
+            _recPropDuBox.Name = "_recPropDuBox";
+            _recPropDuBox.Size = new Size(50, 23);
+            _recPropDuBox.TabIndex = 31;
+            // 
+            // TIT_D
+            // 
+            TIT_D.AutoSize = true;
+            TIT_D.Location = new Point(91, 357);
+            TIT_D.Name = "TIT_D";
+            TIT_D.Size = new Size(17, 17);
+            TIT_D.TabIndex = 32;
+            TIT_D.Text = "D";
+            // 
+            // TIT_Q
+            // 
+            TIT_Q.AutoSize = true;
+            TIT_Q.Location = new Point(161, 357);
+            TIT_Q.Name = "TIT_Q";
+            TIT_Q.Size = new Size(18, 17);
+            TIT_Q.TabIndex = 34;
+            TIT_Q.Text = "Q";
+            // 
+            // _recPropQlBox
+            // 
+            _recPropQlBox.Location = new Point(180, 354);
+            _recPropQlBox.Name = "_recPropQlBox";
+            _recPropQlBox.Size = new Size(50, 23);
+            _recPropQlBox.TabIndex = 33;
             // 
             // ConfigWindow
             // 
             AcceptButton = _okBtn;
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(255, 441);
+            ClientSize = new Size(255, 599);
+            Controls.Add(TIT_Q);
+            Controls.Add(_recPropQlBox);
+            Controls.Add(TIT_D);
+            Controls.Add(_recPropDuBox);
+            Controls.Add(TIT_RECDURATION);
+            Controls.Add(TIT_H);
+            Controls.Add(TIT_W);
+            Controls.Add(_recScopeHBox);
+            Controls.Add(_recScopeWBox);
+            Controls.Add(TIT_T);
+            Controls.Add(TIT_L);
+            Controls.Add(_recScopeTBox);
+            Controls.Add(_recScopeLBox);
+            Controls.Add(TIT_SCOPE);
+            Controls.Add(TIT_REC);
+            Controls.Add(TIT_ACTCONF);
             Controls.Add(label1);
             Controls.Add(_rfsWaitTImeBox);
             Controls.Add(TIT_E2J);
@@ -259,5 +424,21 @@
         private Label TIT_E2J;
         private Label label1;
         private TextBox _rfsWaitTImeBox;
+        private Label TIT_ACTCONF;
+        private Label TIT_REC;
+        private Label TIT_SCOPE;
+        private TextBox _recScopeLBox;
+        private TextBox _recScopeTBox;
+        private Label TIT_L;
+        private Label TIT_T;
+        private Label TIT_H;
+        private Label TIT_W;
+        private TextBox _recScopeHBox;
+        private TextBox _recScopeWBox;
+        private Label TIT_RECDURATION;
+        private TextBox _recPropDuBox;
+        private Label TIT_D;
+        private Label TIT_Q;
+        private TextBox _recPropQlBox;
     }
 }

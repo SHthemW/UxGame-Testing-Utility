@@ -272,9 +272,18 @@ namespace UxGame_Testing_Utility
             _debugLogger.ShowLog("start record...", LogLevel.inf);
 
             await new ScreenRecorder(
-                scope: (Width: 360, Height: 640, Left: -720, Top: 100),           
-                config: new RecordProperty(outputPath: $"{dataConf.TestRecPath}{testCaseName}.gif", FPS: 30),
-                durationSec: 18)
+                scope: (
+                    Width: dataConf.RecScope_W, 
+                    Height: dataConf.RecScope_H, 
+                    Left: dataConf.RecScope_L, 
+                    Top: dataConf.RecScope_T
+                ),           
+                config: new RecordProperty(
+                    FPS: 30,
+                    outputPath: $"{dataConf.TestRecPath}{testCaseName}.gif",         
+                    quality: dataConf.RecQuality
+                ),
+                durationSec: dataConf.RecDurtion)
             .Record();
 
             _debugLogger.ShowLog("finished record...", LogLevel.inf);
