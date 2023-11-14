@@ -41,6 +41,7 @@
             AUTHOR = new Label();
             _configBtn = new Button();
             _cleanBtn = new Button();
+            _versionCode = new Label();
             CENTER_PANEL.SuspendLayout();
             SuspendLayout();
             // 
@@ -186,11 +187,24 @@
             _cleanBtn.UseVisualStyleBackColor = true;
             _cleanBtn.Click += CleanBtn_Click;
             // 
+            // _versionCode
+            // 
+            _versionCode.AutoSize = true;
+            _versionCode.Font = new Font("Trebuchet MS", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
+            _versionCode.ForeColor = SystemColors.ButtonShadow;
+            _versionCode.Location = new Point(50, 508);
+            _versionCode.Name = "_versionCode";
+            _versionCode.Size = new Size(30, 18);
+            _versionCode.TabIndex = 5;
+            _versionCode.Text = "ver.";
+            _versionCode.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(293, 562);
+            Controls.Add(_versionCode);
             Controls.Add(_cleanBtn);
             Controls.Add(_logBox);
             Controls.Add(_configBtn);
@@ -221,5 +235,6 @@
         private Label TIP_2;
         private TextBox _infoBox;
         private CheckBox _enableSeqChkbox;
+        private Label _versionCode;
     }
 }

@@ -9,12 +9,15 @@ namespace UxGame_Testing_Utility
 {
     public partial class MainWindow : Form
     {
+        private const string VERSION_CODE = "v2.1";
+
         private readonly LogService _debugLogger;
         private readonly LogService _infoLogger;
 
         public MainWindow()
         {
             InitializeComponent();
+            _versionCode.Text = VERSION_CODE;
 
             _debugLogger = new(_logBox);
             _infoLogger = new(_infoBox);
@@ -44,10 +47,10 @@ namespace UxGame_Testing_Utility
                 }
 
                 foreach (string testCase in testTargets)
-                {                   
+                {
                     _debugLogger.ShowLog($"start to deploy case <{testCase}> :", LogLevel.inf);
 
-                    bool   testMaxLevel = testCase.Contains('*');
+                    bool testMaxLevel = testCase.Contains('*');
                     string testCaseName = testCase.Replace("*", "");
 
                     // apply test case in local
@@ -77,7 +80,7 @@ namespace UxGame_Testing_Utility
             {
                 // init config
                 var (dataConf, userConf) = await GetConfig();
-               
+
                 await RefreshDataInUnity(dataConf);
 
                 _debugLogger.ShowLog("Refresh done.", LogLevel.inf);
@@ -263,8 +266,8 @@ namespace UxGame_Testing_Utility
 
             _debugLogger.ShowLog("calling auto tester in unity...", LogLevel.inf);
 
-            var autoTestMsg = await server.SendCommand(ClientCmd.BEGIN_AUTO_TEST);    
-            
+            var autoTestMsg = await server.SendCommand(ClientCmd.BEGIN_AUTO_TEST);
+
             var message = autoTestMsg.Split("--")[0];
             var recordWaitingSec = float.Parse(autoTestMsg.Split("--")[1]);
             _debugLogger.ShowLog($"{message} {recordWaitingSec}.", LogLevel.inf);
@@ -281,14 +284,14 @@ namespace UxGame_Testing_Utility
 
             await new ScreenRecorder(
                 scope: (
-                    Width: dataConf.RecScope_W, 
-                    Height: dataConf.RecScope_H, 
-                    Left: dataConf.RecScope_L, 
+                    Width: dataConf.RecScope_W,
+                    Height: dataConf.RecScope_H,
+                    Left: dataConf.RecScope_L,
                     Top: dataConf.RecScope_T
-                ),           
+                ),
                 config: new RecordProperty(
                     FPS: 30,
-                    outputPath: $"{dataConf.TestRecPath}{gifFileName}.gif",         
+                    outputPath: $"{dataConf.TestRecPath}{gifFileName}.gif",
                     quality: dataConf.RecQuality
                 ),
                 durationSec: dataConf.RecDurtion)
