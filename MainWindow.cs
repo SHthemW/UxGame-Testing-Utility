@@ -43,12 +43,15 @@ namespace UxGame_Testing_Utility
                     return;
                 }
 
-                foreach (var toTest in testTargets)
-                {
-                    _debugLogger.ShowLog($"start to deploy case <{toTest}> :", LogLevel.inf);
+                foreach (string testCase in testTargets)
+                {                   
+                    _debugLogger.ShowLog($"start to deploy case <{testCase}> :", LogLevel.inf);
+
+                    bool   testMaxLevel = testCase.Contains('*');
+                    string testCaseName = testCase.Replace("*", "");
 
                     // apply test case in local
-                    await ApplyTestCaseInTab(dataConf, toTest, userConf);
+                    await ApplyTestCaseInTab(dataConf, userConf, testCaseName, testMaxLevel);
 
                     // connect to unity and deploy                 
                     await RefreshDataInUnity(dataConf);
@@ -56,11 +59,11 @@ namespace UxGame_Testing_Utility
                     // start test
                     if (_enableSeqChkbox.Checked)
                     {
-                        await BgnAutoTestInUnity(dataConf, toTest);
+                        await BgnAutoTestInUnity(dataConf, testCaseName, testMaxLevel);
                         await Task.Delay(2000);
                     }
 
-                    _debugLogger.ShowLog($"Deploy test case <{toTest}> done.", LogLevel.inf);
+                    _debugLogger.ShowLog($"Deploy test case <{testCase}> done.", LogLevel.inf);
                 }
             }
             catch (Exception ex)
@@ -149,7 +152,7 @@ namespace UxGame_Testing_Utility
 
             return (dataConf, userConf);
         }
-        private async Task ApplyTestCaseInTab(DataConfig dataConf, string testCaseName, UserConfig userConf)
+        private async Task ApplyTestCaseInTab(DataConfig dataConf, UserConfig userConf, string testCaseName, bool useMaxLvSkill)
         {
             # region Close File Before Process
 
@@ -185,6 +188,9 @@ namespace UxGame_Testing_Utility
             #region Flush Test Data On Runtime
 
             await dataTab.ApplySkillGroupDataOn(group, 1);
+
+            if (useMaxLvSkill)
+                await dataTab.ApplySkillGroupDataOn(new SkillGroup(new Skill[1] { group.Skills[^1] }, testCaseName), 1);
 
             _debugLogger.ShowLog($"finished flush data.", LogLevel.inf);
 
@@ -247,7 +253,7 @@ namespace UxGame_Testing_Utility
 
             server.Dispose();
         }
-        private async Task BgnAutoTestInUnity(DataConfig dataConf, string testCaseName)
+        private async Task BgnAutoTestInUnity(DataConfig dataConf, string testCaseName, bool useMaxLvSkill)
         {
             // startup server
             var server = new NetworkService();
@@ -271,6 +277,8 @@ namespace UxGame_Testing_Utility
 
             _debugLogger.ShowLog("start record...", LogLevel.inf);
 
+            string gifFileName = useMaxLvSkill ? testCaseName + "_maxLv" : testCaseName;
+
             await new ScreenRecorder(
                 scope: (
                     Width: dataConf.RecScope_W, 
@@ -280,7 +288,7 @@ namespace UxGame_Testing_Utility
                 ),           
                 config: new RecordProperty(
                     FPS: 30,
-                    outputPath: $"{dataConf.TestRecPath}{testCaseName}.gif",         
+                    outputPath: $"{dataConf.TestRecPath}{gifFileName}.gif",         
                     quality: dataConf.RecQuality
                 ),
                 durationSec: dataConf.RecDurtion)
