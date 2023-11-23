@@ -9,6 +9,8 @@ namespace UxGame_Testing_Utility.Actions
     {
         public ReplaceDataInTableAction(IMainWindowService program) : base(program)
         {
+            if (string.IsNullOrEmpty(program.CurrentInputContent)) 
+                throw new Exception("current skill id is empty.");
         }
 
         private string TestCaseName => _program.CurrentInputContent.Replace("*", "");
