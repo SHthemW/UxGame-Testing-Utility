@@ -7,7 +7,7 @@ namespace UxGame_Testing_Utility.Actions
 {
     internal sealed class CallRefreshCommandAction : ExecutableAction
     {
-        public CallRefreshCommandAction(DataConfig dataConf, UserConfig userConf, LogService infoLogger, LogService debugLogger) : base(dataConf, userConf, infoLogger, debugLogger)
+        public CallRefreshCommandAction(IMainWindowService program) : base(program)
         {
         }
 
@@ -19,12 +19,12 @@ namespace UxGame_Testing_Utility.Actions
 
             #region Deploy: Convert Excel To Json
 
-            _debugLogger.ShowLog("calling E2J server in unity...", LogLevel.inf);
+            _program.Console.ShowLog("calling E2J server in unity...", LogLevel.inf);
 
             var e2jOprMsg = await server.SendCommand(ClientCmd.CONV_EXCEL_TO_JSON);
-            _debugLogger.ShowLog($"{e2jOprMsg}. waiting for {_dataConf.E2JWaitingTime} ms...", LogLevel.inf);
+            _program.Console.ShowLog($"{e2jOprMsg}. waiting for {_program.DataConfig.E2JWaitingTime} ms...", LogLevel.inf);
 
-            await Task.Delay(_dataConf.E2JWaitingTime);
+            await Task.Delay(_program.DataConfig.E2JWaitingTime);
 
             #endregion
 
@@ -33,12 +33,12 @@ namespace UxGame_Testing_Utility.Actions
             server = new NetworkService();
             await server.ConnectToServer();
 
-            _debugLogger.ShowLog("calling J2B server in unity...", LogLevel.inf);
+            _program.Console.ShowLog("calling J2B server in unity...", LogLevel.inf);
 
             var j2bOprMsg = await server.SendCommand(ClientCmd.CONV_JSON_TO_BIN);
-            _debugLogger.ShowLog($"{j2bOprMsg}. waiting for {_dataConf.J2BWaitingTime} ms...", LogLevel.inf);
+            _program.Console.ShowLog($"{j2bOprMsg}. waiting for {_program.DataConfig.J2BWaitingTime} ms...", LogLevel.inf);
 
-            await Task.Delay(_dataConf.J2BWaitingTime);
+            await Task.Delay(_program.DataConfig.J2BWaitingTime);
 
             #endregion
 
@@ -47,12 +47,12 @@ namespace UxGame_Testing_Utility.Actions
             server = new NetworkService();
             await server.ConnectToServer();
 
-            _debugLogger.ShowLog("refreshing scripts in unity...", LogLevel.inf);
+            _program.Console.ShowLog("refreshing scripts in unity...", LogLevel.inf);
 
             var refreshOprMsg = await server.SendCommand(ClientCmd.REFRESH_SCRIPTS);
-            _debugLogger.ShowLog($"{refreshOprMsg}.", LogLevel.inf);
+            _program.Console.ShowLog($"{refreshOprMsg}.", LogLevel.inf);
 
-            await Task.Delay(_dataConf.RfsWaitingTime);
+            await Task.Delay(_program.DataConfig.RfsWaitingTime);
 
             #endregion
 

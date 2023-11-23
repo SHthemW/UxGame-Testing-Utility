@@ -10,7 +10,7 @@ namespace UxGame_Testing_Utility.Actions
 {
     internal sealed class CallAutoTestCommandAction : ExecutableAction
     {
-        public CallAutoTestCommandAction(DataConfig dataConf, UserConfig userConf, LogService infoLogger, LogService debugLogger) : base(dataConf, userConf, infoLogger, debugLogger)
+        public CallAutoTestCommandAction(IMainWindowService program) : base(program)
         {
         }
 
@@ -22,13 +22,13 @@ namespace UxGame_Testing_Utility.Actions
 
             #region Test: Call auto testing in Unity
 
-            _debugLogger.ShowLog("calling auto tester in unity...", LogLevel.inf);
+            _program.Console.ShowLog("calling auto tester in unity...", LogLevel.inf);
 
             var autoTestMsg = await server.SendCommand(ClientCmd.BEGIN_AUTO_TEST);
 
             var message = autoTestMsg.Split("--")[0];
             var recordWaitingSec = float.Parse(autoTestMsg.Split("--")[1]);
-            _debugLogger.ShowLog($"{message} {recordWaitingSec}.", LogLevel.inf);
+            _program.Console.ShowLog($"{message} {recordWaitingSec}.", LogLevel.inf);
 
             await Task.Delay((int)recordWaitingSec * 1000);
 
@@ -36,26 +36,26 @@ namespace UxGame_Testing_Utility.Actions
 
             #region Test: Begin Record
 
-            _debugLogger.ShowLog("start record...", LogLevel.inf);
+            _program.Console.ShowLog("start record...", LogLevel.inf);
 
             string gifFileName = useMaxLvSkill ? testCaseName + "_maxLv" : testCaseName;
 
             await new ScreenRecorder(
                 scope: (
-                    Width: _dataConf.RecScope_W,
-                    Height: _dataConf.RecScope_H,
-                    Left: _dataConf.RecScope_L,
-                    Top: _dataConf.RecScope_T
+                    Width: _program.DataConfig.RecScope_W,
+                    Height: _program.DataConfig.RecScope_H,
+                    Left: _program.DataConfig.RecScope_L,
+                    Top: _program.DataConfig.RecScope_T
                 ),
                 config: new RecordProperty(
                     FPS: 30,
-                    outputPath: $"{_dataConf.TestRecPath}{gifFileName}.gif",
-                    quality: _dataConf.RecQuality
+                    outputPath: $"{_program.DataConfig.TestRecPath}{gifFileName}.gif",
+                    quality: _program.DataConfig.RecQuality
                 ),
-                durationSec: _dataConf.RecDurtion)
+                durationSec: _program.DataConfig.RecDurtion)
             .Record();
 
-            _debugLogger.ShowLog("finished record...", LogLevel.inf);
+            _program.Console.ShowLog("finished record...", LogLevel.inf);
 
             #endregion
 

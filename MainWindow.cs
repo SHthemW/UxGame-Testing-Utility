@@ -8,20 +8,37 @@ using UxGame_Testing_Utility.Services;
 
 namespace UxGame_Testing_Utility
 {
-    public partial class MainWindow : Form
+    public partial class MainWindow : Form, IMainWindowService
     {
         private const string VERSION_CODE = "v2.1";
 
-        private readonly LogService _debugLogger;
+        private DataConfig? _dataConfig;
+        private UserConfig? _userConfig;
+
+        private readonly LogService _consLogger;
         private readonly LogService _infoLogger;
+        
+        DataConfig IMainWindowService.DataConfig => _dataConfig ?? throw new NullReferenceException();
+        UserConfig IMainWindowService.UserConfig => _userConfig ?? throw new NullReferenceException();        
+        LogService IMainWindowService.InfoWindow => _infoLogger;
+        LogService IMainWindowService.Console    => _consLogger;
 
         public MainWindow()
         {
             InitializeComponent();
             _versionCode.Text = VERSION_CODE;
 
-            _debugLogger = new(_logBox);
+            _consLogger = new(_logBox);
             _infoLogger = new(_infoBox);
+
+            _ = UpdateConfigFromLocal();
+        }
+        public async Task UpdateConfigFromLocal()
+        {
+            this._dataConfig = await LocalService.TryLoadConfigDataFromLocal<DataConfig>();
+            this._userConfig = await LocalService.TryLoadConfigDataFromLocal<UserConfig>();
+
+            _consLogger.ShowLog("finished loading config.", LogLevel.inf);
         }
 
         /*
@@ -35,26 +52,23 @@ namespace UxGame_Testing_Utility
                 if (string.IsNullOrEmpty(_skillIdBox.Text))
                     throw new Exception("skill id is empty.");
 
-                // init config
-                var (dataConf, userConf) = await GetConfig();
-
                 // init action
-                var replaceDataAction = new ReplaceDataInTableAction (dataConf, userConf, _infoLogger, _debugLogger);
-                var callRefreshAction = new CallRefreshCommandAction (dataConf, userConf, _infoLogger, _debugLogger);
-                var callAutoTstAction = new CallAutoTestCommandAction(dataConf, userConf, _infoLogger, _debugLogger);
+                var replaceDataAction = new ReplaceDataInTableAction (this);
+                var callRefreshAction = new CallRefreshCommandAction (this);
+                var callAutoTstAction = new CallAutoTestCommandAction(this);
 
                 // get test targets
                 var testTargets = _skillIdBox.Text.Split(' ');
 
                 if (testTargets.Length > 1 && !_enableSeqChkbox.Checked)
                 {
-                    _debugLogger.ShowLog($"cannot test continuous with no-seq option.", LogLevel.err);
+                    _consLogger.ShowLog($"cannot test continuous with no-seq option.", LogLevel.err);
                     return;
                 }
 
                 foreach (string testCase in testTargets)
                 {
-                    _debugLogger.ShowLog($"start to deploy case <{testCase}> :", LogLevel.inf);
+                    _consLogger.ShowLog($"start to deploy case <{testCase}> :", LogLevel.inf);
 
                     bool testMaxLevel = testCase.Contains('*');
                     string testCaseName = testCase.Replace("*", "");
@@ -72,37 +86,34 @@ namespace UxGame_Testing_Utility
                         await Task.Delay(2000);
                     }
 
-                    _debugLogger.ShowLog($"Deploy test case <{testCase}> done.", LogLevel.inf);
+                    _consLogger.ShowLog($"Deploy test case <{testCase}> done.", LogLevel.inf);
                 }
             }
             catch (Exception ex)
             {
-                _debugLogger.ShowLog(ex.Message, LogLevel.err);
+                _consLogger.ShowLog(ex.Message, LogLevel.err);
             }
         }
         private async void RefreshBtn_Click(object sender, EventArgs e)
         {
             try
             {
-                // init config
-                var (dataConf, userConf) = await GetConfig();
-
                 // init action
-                var callRefreshAction = new CallRefreshCommandAction(dataConf, userConf, _infoLogger, _debugLogger);
+                var callRefreshAction = new CallRefreshCommandAction(this);
 
                 await callRefreshAction.Execute();
 
-                _debugLogger.ShowLog("Refresh done.", LogLevel.inf);
+                _consLogger.ShowLog("Refresh done.", LogLevel.inf);
             }
             catch (Exception ex)
             {
-                _debugLogger.ShowLog(ex.Message, LogLevel.err);
+                _consLogger.ShowLog(ex.Message, LogLevel.err);
             }
         }
 
         private void CleanBtn_Click(object sender, EventArgs e)
         {
-            _debugLogger.CleanLog();
+            _consLogger.CleanLog();
         }
         private void ConfigBtn_Click(object sender, EventArgs e)
         {
@@ -123,12 +134,14 @@ namespace UxGame_Testing_Utility
 
                     LocalService.SaveConfigDataToLocal(dataConf);
                     LocalService.SaveConfigDataToLocal(userConf);
-                    _debugLogger.ShowLog($"config data is saved.", LogLevel.inf);
+
+                    _ = UpdateConfigFromLocal();
+                    _consLogger.ShowLog($"config data is saved.", LogLevel.inf);
                 }
             }
             catch (Exception ex)
             {
-                _debugLogger.ShowLog(ex.Message, LogLevel.err);
+                _consLogger.ShowLog(ex.Message, LogLevel.err);
             }
         }
         private void LogBox_TextChanged(object sender, EventArgs e)
@@ -148,21 +161,6 @@ namespace UxGame_Testing_Utility
                 _applyAndDeployBtn.Text = "应用并部署";
                 _refreshBtn.Enabled = true;
             }
-        }
-
-        /*
-         *  Functions
-         */
-
-        private async Task<(DataConfig dataConf, UserConfig userConf)> GetConfig()
-        {
-            var dataConf = await LocalService.TryLoadConfigDataFromLocal<DataConfig>();
-
-            var userConf = await LocalService.TryLoadConfigDataFromLocal<UserConfig>();
-
-            _debugLogger.ShowLog("finished loading config.", LogLevel.inf);
-
-            return (dataConf, userConf);
         }
     }
 }

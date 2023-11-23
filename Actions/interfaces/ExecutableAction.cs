@@ -10,18 +10,10 @@ namespace UxGame_Testing_Utility.Actions
 {
     internal abstract class ExecutableAction
     {
-        protected readonly DataConfig _dataConf;
-        protected readonly UserConfig _userConf;
-
-        protected readonly LogService _infoLogger;
-        protected readonly LogService _debugLogger;
-
-        internal ExecutableAction(DataConfig dataConf, UserConfig userConf, LogService infoLogger, LogService debugLogger)
+        protected readonly IMainWindowService _program;
+        protected ExecutableAction(IMainWindowService program)
         {
-            _dataConf = dataConf ?? throw new ArgumentNullException(nameof(dataConf));
-            _userConf = userConf ?? throw new ArgumentNullException(nameof(userConf));
-            _infoLogger = infoLogger ?? throw new ArgumentNullException(nameof(infoLogger));
-            _debugLogger = debugLogger ?? throw new ArgumentNullException(nameof(debugLogger));
+            _program = program ?? throw new ArgumentNullException(nameof(program));
         }
 
         private ExecutableAction() => throw new NotImplementedException();

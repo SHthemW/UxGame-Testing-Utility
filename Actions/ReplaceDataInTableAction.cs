@@ -7,7 +7,7 @@ namespace UxGame_Testing_Utility.Actions
 {
     internal sealed class ReplaceDataInTableAction : ExecutableAction
     {
-        public ReplaceDataInTableAction(DataConfig dataConf, UserConfig userConf, LogService infoLogger, LogService debugLogger) : base(dataConf, userConf, infoLogger, debugLogger)
+        public ReplaceDataInTableAction(IMainWindowService program) : base(program)
         {
         }
 
@@ -15,18 +15,18 @@ namespace UxGame_Testing_Utility.Actions
         {
             # region Close File Before Process
 
-            if (_userConf.AutoCloseFileIfOccupying)
-                ProcessService.KillWindow($"{Path.GetFileName(_dataConf.DataSrcPath)} - LibreOffice Calc");
+            if (_program.UserConfig.AutoCloseFileIfOccupying)
+                ProcessService.KillWindow($"{Path.GetFileName(_program.DataConfig.DataSrcPath)} - LibreOffice Calc");
 
             # endregion
 
             // excel file name: dataTab
             #region Load Excel File
 
-            var dataTab = new ExcelService(_dataConf.DataSrcPath);
+            var dataTab = new ExcelService(_program.DataConfig.DataSrcPath);
             await dataTab.InitExcelFile();
 
-            _debugLogger.ShowLog("finished open xlsx.", LogLevel.inf);
+            _program.Console.ShowLog("finished open xlsx.", LogLevel.inf);
 
             #endregion
 
@@ -34,12 +34,12 @@ namespace UxGame_Testing_Utility.Actions
 
             var group = await dataTab.GetSkillGroup(testCaseName);
 
-            _debugLogger.ShowLog($"finished get test data. found {group.Count} skills.", LogLevel.inf);
+            _program.Console.ShowLog($"finished get test data. found {group.Count} skills.", LogLevel.inf);
 
-            if (_userConf.ShowSKillDetailsAfterLoad)
+            if (_program.UserConfig.ShowSKillDetailsAfterLoad)
             {
-                _infoLogger.CleanLog();
-                _infoLogger.ShowLog(group.ToString(), LogLevel.non);
+                _program.InfoWindow.CleanLog();
+                _program.InfoWindow.ShowLog(group.ToString(), LogLevel.non);
             }
 
             #endregion
@@ -51,16 +51,16 @@ namespace UxGame_Testing_Utility.Actions
             if (useMaxLvSkill)
                 await dataTab.ApplySkillGroupDataOn(new SkillGroup(new Skill[1] { group.Skills[^1] }, testCaseName), 1);
 
-            _debugLogger.ShowLog($"finished flush data.", LogLevel.inf);
+            _program.Console.ShowLog($"finished flush data.", LogLevel.inf);
 
             #endregion           
 
             #region Open File After Process
 
-            if (_userConf.AutoOpenFileAfterProcess)
+            if (_program.UserConfig.AutoOpenFileAfterProcess)
                 ProcessService.Startup(
                     @"C:\\Program Files\\LibreOffice\\program\\scalc.exe",
-                    _dataConf.DataSrcPath
+                    _program.DataConfig.DataSrcPath
                     );
 
             #endregion
