@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.DirectoryServices.ActiveDirectory;
 using System.Text;
 using System.Xml.Linq;
+using UxGame_Testing_Utility.Actions;
 using UxGame_Testing_Utility.Entities;
 using UxGame_Testing_Utility.Services;
 
@@ -37,6 +38,11 @@ namespace UxGame_Testing_Utility
                 // init config
                 var (dataConf, userConf) = await GetConfig();
 
+                // init action
+                var replaceDataAction = new ReplaceDataInTableAction (dataConf, userConf, _infoLogger, _debugLogger);
+                var callRefreshAction = new CallRefreshCommandAction (dataConf, userConf, _infoLogger, _debugLogger);
+                var callAutoTstAction = new CallAutoTestCommandAction(dataConf, userConf, _infoLogger, _debugLogger);
+
                 // get test targets
                 var testTargets = _skillIdBox.Text.Split(' ');
 
@@ -54,15 +60,15 @@ namespace UxGame_Testing_Utility
                     string testCaseName = testCase.Replace("*", "");
 
                     // apply test case in local
-                    await ApplyTestCaseInTab(dataConf, userConf, testCaseName, testMaxLevel);
+                    await replaceDataAction.Execute(testCaseName, testMaxLevel);
 
                     // connect to unity and deploy                 
-                    await RefreshDataInUnity(dataConf);
+                    await callRefreshAction.Execute();
 
                     // start test
                     if (_enableSeqChkbox.Checked)
                     {
-                        await BgnAutoTestInUnity(dataConf, testCaseName, testMaxLevel);
+                        await callAutoTstAction.Execute(testCaseName, testMaxLevel);
                         await Task.Delay(2000);
                     }
 
@@ -81,7 +87,10 @@ namespace UxGame_Testing_Utility
                 // init config
                 var (dataConf, userConf) = await GetConfig();
 
-                await RefreshDataInUnity(dataConf);
+                // init action
+                var callRefreshAction = new CallRefreshCommandAction(dataConf, userConf, _infoLogger, _debugLogger);
+
+                await callRefreshAction.Execute();
 
                 _debugLogger.ShowLog("Refresh done.", LogLevel.inf);
             }
@@ -154,154 +163,6 @@ namespace UxGame_Testing_Utility
             _debugLogger.ShowLog("finished loading config.", LogLevel.inf);
 
             return (dataConf, userConf);
-        }
-        private async Task ApplyTestCaseInTab(DataConfig dataConf, UserConfig userConf, string testCaseName, bool useMaxLvSkill)
-        {
-            # region Close File Before Process
-
-            if (userConf.AutoCloseFileIfOccupying)
-                ProcessService.KillWindow($"{Path.GetFileName(dataConf.DataSrcPath)} - LibreOffice Calc");
-
-            # endregion
-
-            // excel file name: dataTab
-            #region Load Excel File
-
-            var dataTab = new ExcelService(dataConf.DataSrcPath);
-            await dataTab.InitExcelFile();
-
-            _debugLogger.ShowLog("finished open xlsx.", LogLevel.inf);
-
-            #endregion
-
-            #region Get Test Target
-
-            var group = await dataTab.GetSkillGroup(testCaseName);
-
-            _debugLogger.ShowLog($"finished get test data. found {group.Count} skills.", LogLevel.inf);
-
-            if (userConf.ShowSKillDetailsAfterLoad)
-            {
-                _infoLogger.CleanLog();
-                _infoLogger.ShowLog(group.ToString(), LogLevel.non);
-            }
-
-            #endregion
-
-            #region Flush Test Data On Runtime
-
-            await dataTab.ApplySkillGroupDataOn(group, 1);
-
-            if (useMaxLvSkill)
-                await dataTab.ApplySkillGroupDataOn(new SkillGroup(new Skill[1] { group.Skills[^1] }, testCaseName), 1);
-
-            _debugLogger.ShowLog($"finished flush data.", LogLevel.inf);
-
-            #endregion           
-
-            #region Open File After Process
-
-            if (userConf.AutoOpenFileAfterProcess)
-                ProcessService.Startup(
-                    @"C:\\Program Files\\LibreOffice\\program\\scalc.exe",
-                    dataConf.DataSrcPath
-                    );
-
-            #endregion
-        }
-        private async Task RefreshDataInUnity(DataConfig dataConf)
-        {
-            // startup server
-            var server = new NetworkService();
-            await server.ConnectToServer();
-
-            #region Deploy: Convert Excel To Json
-
-            _debugLogger.ShowLog("calling E2J server in unity...", LogLevel.inf);
-
-            var e2jOprMsg = await server.SendCommand(ClientCmd.CONV_EXCEL_TO_JSON);
-            _debugLogger.ShowLog($"{e2jOprMsg}. waiting for {dataConf.E2JWaitingTime} ms...", LogLevel.inf);
-
-            await Task.Delay(dataConf.E2JWaitingTime);
-
-            #endregion
-
-            #region Deploy: Convert Json To Bin
-
-            server = new NetworkService();
-            await server.ConnectToServer();
-
-            _debugLogger.ShowLog("calling J2B server in unity...", LogLevel.inf);
-
-            var j2bOprMsg = await server.SendCommand(ClientCmd.CONV_JSON_TO_BIN);
-            _debugLogger.ShowLog($"{j2bOprMsg}. waiting for {dataConf.J2BWaitingTime} ms...", LogLevel.inf);
-
-            await Task.Delay(dataConf.J2BWaitingTime);
-
-            #endregion
-
-            #region Deploy: Refresh Unity Editor
-
-            server = new NetworkService();
-            await server.ConnectToServer();
-
-            _debugLogger.ShowLog("refreshing scripts in unity...", LogLevel.inf);
-
-            var refreshOprMsg = await server.SendCommand(ClientCmd.REFRESH_SCRIPTS);
-            _debugLogger.ShowLog($"{refreshOprMsg}.", LogLevel.inf);
-
-            await Task.Delay(dataConf.RfsWaitingTime);
-
-            #endregion
-
-            server.Dispose();
-        }
-        private async Task BgnAutoTestInUnity(DataConfig dataConf, string testCaseName, bool useMaxLvSkill)
-        {
-            // startup server
-            var server = new NetworkService();
-            await server.ConnectToServer();
-
-            #region Test: Call auto testing in Unity
-
-            _debugLogger.ShowLog("calling auto tester in unity...", LogLevel.inf);
-
-            var autoTestMsg = await server.SendCommand(ClientCmd.BEGIN_AUTO_TEST);
-
-            var message = autoTestMsg.Split("--")[0];
-            var recordWaitingSec = float.Parse(autoTestMsg.Split("--")[1]);
-            _debugLogger.ShowLog($"{message} {recordWaitingSec}.", LogLevel.inf);
-
-            await Task.Delay((int)recordWaitingSec * 1000);
-
-            #endregion
-
-            #region Test: Begin Record
-
-            _debugLogger.ShowLog("start record...", LogLevel.inf);
-
-            string gifFileName = useMaxLvSkill ? testCaseName + "_maxLv" : testCaseName;
-
-            await new ScreenRecorder(
-                scope: (
-                    Width: dataConf.RecScope_W,
-                    Height: dataConf.RecScope_H,
-                    Left: dataConf.RecScope_L,
-                    Top: dataConf.RecScope_T
-                ),
-                config: new RecordProperty(
-                    FPS: 30,
-                    outputPath: $"{dataConf.TestRecPath}{gifFileName}.gif",
-                    quality: dataConf.RecQuality
-                ),
-                durationSec: dataConf.RecDurtion)
-            .Record();
-
-            _debugLogger.ShowLog("finished record...", LogLevel.inf);
-
-            #endregion
-
-            server.Dispose();
         }
     }
 }
