@@ -11,7 +11,10 @@ namespace UxGame_Testing_Utility.Actions
         {
         }
 
-        public async Task Execute(string testCaseName, bool useMaxLvSkill)
+        private string TestCaseName => _program.CurrentInputContent.Replace("*", "");
+        private bool UseMaxLvSkill => _program.CurrentInputContent.Contains('*');
+
+        public override async Task Execute()
         {
             # region Close File Before Process
 
@@ -32,7 +35,7 @@ namespace UxGame_Testing_Utility.Actions
 
             #region Get Test Target
 
-            var group = await dataTab.GetSkillGroup(testCaseName);
+            var group = await dataTab.GetSkillGroup(TestCaseName);
 
             _program.Console.ShowLog($"finished get test data. found {group.Count} skills.", LogLevel.inf);
 
@@ -48,8 +51,8 @@ namespace UxGame_Testing_Utility.Actions
 
             await dataTab.ApplySkillGroupDataOn(group, 1);
 
-            if (useMaxLvSkill)
-                await dataTab.ApplySkillGroupDataOn(new SkillGroup(new Skill[1] { group.Skills[^1] }, testCaseName), 1);
+            if (UseMaxLvSkill)
+                await dataTab.ApplySkillGroupDataOn(new SkillGroup(new Skill[1] { group.Skills[^1] }, TestCaseName), 1);
 
             _program.Console.ShowLog($"finished flush data.", LogLevel.inf);
 

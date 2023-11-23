@@ -22,6 +22,15 @@ namespace UxGame_Testing_Utility
         UserConfig IMainWindowService.UserConfig => _userConfig ?? throw new NullReferenceException();        
         LogService IMainWindowService.InfoWindow => _infoLogger;
         LogService IMainWindowService.Console    => _consLogger;
+        string     IMainWindowService.CurrentInputContent
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_skillIdBox.Text))
+                    throw new Exception("skill id is empty.");
+                return _skillIdBox.Text;
+            }
+        }
 
         public MainWindow()
         {
@@ -49,13 +58,10 @@ namespace UxGame_Testing_Utility
         {
             try
             {
-                if (string.IsNullOrEmpty(_skillIdBox.Text))
-                    throw new Exception("skill id is empty.");
-
                 // init action
-                var replaceDataAction = new ReplaceDataInTableAction (this);
-                var callRefreshAction = new CallRefreshCommandAction (this);
-                var callAutoTstAction = new CallAutoTestCommandAction(this);
+                ExecutableAction replaceData = new ReplaceDataInTableAction (this);
+                ExecutableAction callRefresh = new CallRefreshCommandAction (this);
+                ExecutableAction callAutoTst = new CallAutoTestCommandAction(this);
 
                 // get test targets
                 var testTargets = _skillIdBox.Text.Split(' ');
@@ -69,20 +75,17 @@ namespace UxGame_Testing_Utility
                 foreach (string testCase in testTargets)
                 {
                     _consLogger.ShowLog($"start to deploy case <{testCase}> :", LogLevel.inf);
-
-                    bool testMaxLevel = testCase.Contains('*');
-                    string testCaseName = testCase.Replace("*", "");
-
+                  
                     // apply test case in local
-                    await replaceDataAction.Execute(testCaseName, testMaxLevel);
+                    await replaceData.Execute();
 
                     // connect to unity and deploy                 
-                    await callRefreshAction.Execute();
+                    await callRefresh.Execute();
 
                     // start test
                     if (_enableSeqChkbox.Checked)
                     {
-                        await callAutoTstAction.Execute(testCaseName, testMaxLevel);
+                        await callAutoTst.Execute();
                         await Task.Delay(2000);
                     }
 
@@ -99,9 +102,9 @@ namespace UxGame_Testing_Utility
             try
             {
                 // init action
-                var callRefreshAction = new CallRefreshCommandAction(this);
+                ExecutableAction callRefresh = new CallRefreshCommandAction(this);
 
-                await callRefreshAction.Execute();
+                await callRefresh.Execute();
 
                 _consLogger.ShowLog("Refresh done.", LogLevel.inf);
             }

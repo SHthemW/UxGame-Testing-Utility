@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UxGame_Testing_Utility.Entities;
 using UxGame_Testing_Utility.Services;
 
@@ -14,7 +11,10 @@ namespace UxGame_Testing_Utility.Actions
         {
         }
 
-        public async Task Execute(string testCaseName, bool useMaxLvSkill)
+        private string TestCaseName => _program.CurrentInputContent.Replace("*", "");
+        private bool UseMaxLvSkill => _program.CurrentInputContent.Contains('*');
+
+        public override async Task Execute()
         {
             // startup server
             var server = new NetworkService();
@@ -38,7 +38,7 @@ namespace UxGame_Testing_Utility.Actions
 
             _program.Console.ShowLog("start record...", LogLevel.inf);
 
-            string gifFileName = useMaxLvSkill ? testCaseName + "_maxLv" : testCaseName;
+            string gifFileName = UseMaxLvSkill ? TestCaseName + "_maxLv" : TestCaseName;
 
             await new ScreenRecorder(
                 scope: (

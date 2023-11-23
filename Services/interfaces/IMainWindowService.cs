@@ -14,5 +14,7 @@ namespace UxGame_Testing_Utility.Services
 
         LogService Console { get; }
         LogService InfoWindow { get; }
+
+        string CurrentInputContent { get; }
     }
 }
