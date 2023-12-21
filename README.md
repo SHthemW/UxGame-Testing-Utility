@@ -85,4 +85,4 @@ private async void ApplyAndDeployBtn_Click(object sender, EventArgs e)
 }
 ```
 
-这个示例中, ```ReplaceDataInTableAction```, ```CallRefreshCommandAction```和```CallAutoTestCommandAction```都是根据API编写的自定义行为.  点击主界面的Click按钮将会以此执行它们.
+这个示例中, ```ReplaceDataInTableAction```, ```CallRefreshCommandAction```和```CallAutoTestCommandAction```都是根据API编写的自定义行为.  在本示例中, 点击主界面的Click按钮将会依次执行它们.
